@@ -1,0 +1,28 @@
+/* pages/updateUserInfo/updateUserInfo.wxss */
+pages {
+  background-color: #f5f5f5;
+}
+
+.update-user_info {
+  padding: 50rpx 30rpx 0;
+  font-size: 28rpx;
+}
+
+.update-user_info input {
+  height: 90rpx;
+  padding: 0 30rpx;
+  background-color: #fff;
+  border-radius: 10rpx;
+}
+
+.btn-recharge {
+  margin: 90rpx 30rpx 0 30rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  border-radius: 12rpx;
+  font-size: 30rpx;
+  background-color: #e41436;
+  color: #fff;
+  margin-top: 50rpx;
+}

@@ -1,0 +1,149 @@
+<!--pages/commentDetail/commentDetail.wxml-->
+
+<view>
+  <scroll-view scroll-y class='scroll-view' bindscrolltoupper="upper" bindscrolltolower="lower" bindscroll="scroll" scroll-into-view="{{toView}}" scroll-top="{{scrollTop}}">
+    <view id="" class="goods">
+      <view class='user'>
+        <view class='user-image-info'>
+          <image class="user-image" src="{{usermsg.avatarUrl}}" />
+        </view>
+        <view class='user-info'>
+          <view class='user-name-tr'>
+            <view class='user-name' wx:if="{{usermsg.userName!='' && usermsg.userName!=null}}">{{usermsg.userName}}</view>
+            <view class='user-name' wx:if="{{usermsg.userName=='' || usermsg.userName==null}}">{{usermsg.nickName}}</view>
+            <view class='type' wx:if="{{goodsDetails.type==0}}">衣物</view>
+            <view class='type' wx:if="{{goodsDetails.type==1}}">书籍</view>
+            <view class='type' wx:if="{{goodsDetails.type==2}}">出行工具</view>
+            <view class='type' wx:if="{{goodsDetails.type==3}}">电子产品</view>
+            <view class='type' wx:if="{{goodsDetails.type==4}}">日用品</view>
+            <view class='type' wx:if="{{goodsDetails.type==5}}">其他</view>
+          </view>
+          <view class='timestamp'>发布于：{{goodsDetails.releaseDate}}</view>
+          <view class="clear" style='clear: both;'></view>
+        </view>
+      </view>
+      <view class='price'>￥{{goodsDetails.price}}
+        <span class='originalPrice'>押金￥{{goodsDetails.deposit}}</span>
+      </view>
+      <view class='dec'>
+        <span style='font-weight:bold'>{{goodsDetails.goodName}} </span>       
+      </view>
+      <view>
+        <span >{{goodsDetails.introduction}} </span>
+      </view>
+
+      <!-- // 相关图片展示 -->
+      <view class='images-list'>
+        <view class='showPic' style='background:white'>
+          <view wx:for="{{goodsDetails.good_attachments}}" wx:for-item="image" wx:key="index" class="previewimg">
+            <image mode='widthFix' class='image' src="{{image.attachmentUrl}}" data-src="{{image.attachmentUrl}}"></image>
+          </view>
+          <view class="clear" style='clear: both;'></view>
+        </view>
+        <view class="clear" style='clear: both;'></view>
+      </view>
+
+
+      <!-- // 评论区 -->
+      <view class='comment'>
+        <view class='comment-title'>评论（点击评论可回复,长按可删除回复）</view>
+        <view  >
+          <view data-commentid='{{goodsComments.commentId}}' data-replyid='{{openid}}' data-replytoid="{{goodsComments.commentUserId}}" data-anonymous="{{goodsComments.anonymous}}" data-nickname="{{goodsComments.nickName}}" data-username="{{goodsComments.userName}}" catchtap="bindReply" bindlongtap="deleteReply2" style='display:block'>
+            <view class='firstComment'>
+              <view>
+                <!-- 评论人头像 -->
+                <view class='user-image-info-left'>
+                  <image class="user-image" wx:if="{{goodsComments.anonymous==0}}" src="{{goodsComments.avatarUrl}}" />
+                  <image class="user-image" wx:if="{{goodsComments.anonymous==1}}" src="../../images/noName.png" />
+                </view>
+                <view class='user-right'>
+                  <view class='user-name-tr'>
+                    <!-- 评论人的昵称 -->
+                    <view class='user-name-left' wx:if="{{goodsComments.anonymous==1}}">匿名用户</view>
+                    <view class='user-name-left' wx:if="{{goodsComments.anonymous==0 && goodsComments.userName!='' && goodsComments.userName!=null}}">{{goodsComments.userName}}</view>
+                    <view class='user-name-left' wx:if="{{goodsComments.anonymous==0 && goodsComments.userName=='' || goodsComments.userName==null}}">{{goodsComments.nickName}}</view>
+                  </view>
+                  <!-- 评论日期 -->
+                  <view class='comment-date'>{{goodsComments.date}}</view>
+
+                </view>
+                <view class="clear" style='clear: both;'></view>
+              </view>
+              <!-- 评论内容 -->
+              <view class='content' wx:if="{{goodsComments.content!=null && goodsComments.content!=''}}">{{goodsComments.content}}</view>
+              <view class='content' wx:else>该用户无文字评价！</view>
+            </view>
+          </view>
+
+          <!-- 二级评论 即回复的评论 -->
+          <view wx:for="{{goodsComments.list}}" wx:for-item="replyComment" wx:key="index">
+            <view class='secondComment' data-id='{{replyComment.id}}' data-replycomment="{{replyComment.replyComment}}" data-replyid='{{replyComment.replyToId}}' data-replytoid="{{replyComment.replyId}}" data-nickname="{{replyComment.nickName_from}}" data-username="{{replyComment.userName_from}}" data-anonymous="{{goodsComments.anonymous}}" bindlongtap="deleteReply" bindtap="bindReply2">
+              <view>
+                <view class='user-image-info-left'>
+                  <image class="user-image" wx:if="{{openid==replyComment.userId_from}}" src="{{replyComment.avatarUrl_from}}" />
+                  <image class="user-image" wx:if="{{openid!=replyComment.userId_from && goodsComments.anonymous==1}}" src="../../images/noName.png" />
+                  <image class="user-image" wx:if="{{openid!=replyComment.userId_from && goodsComments.anonymous==0}}" src="{{replyComment.avatarUrl_from}}" />
+                </view>
+                <view class='user-right'>
+                  <view class='user-name-tr'>
+                    <view class='user-name-left' wx:if="{{openid==replyComment.userId_from}}">
+                      <view wx:if="{{replyComment.userName_from=='' || replyComment.userName_from==null}}">{{replyComment.nickName_from}}</view>
+                      <view wx:if="{{replyComment.userName_from!='' && replyComment.userName_from!=null}}">{{replyComment.userName_from}}</view>
+                    </view>
+
+                    <view class='user-name-left' wx:if="{{openid!=replyComment.userId_from && goodsComments.anonymous==0}}">
+                      <view wx:if="{{replyComment.userName_from=='' || replyComment.userName_from==null}}">{{replyComment.nickName_from}}</view>
+                      <view wx:if="{{replyComment.userName_from!='' && replyComment.userName_from!=null}}">{{replyComment.userName_from}}</view>
+                    </view>
+                    <view class='user-name-left' wx:if="{{openid!=replyComment.userId_from && goodsComments.anonymous==1}}">
+                      <view>匿名用户</view>
+                    </view>
+
+                  </view>
+                  <view class='comment-date'>{{replyComment.replyDate}}</view>
+
+
+                </view>
+                <view class="clear" style='clear: both;'></view>
+              </view>
+              <view class='content'>回复
+                <span class='reply' wx:if="{{openid==replyComment.userId_to}}">
+                  <view wx:if="{{replyComment.userName_to!='' && replyComment.userName_to!=null}}">
+                    @{{replyComment.userName_to}}
+                  </view>
+                  <view wx:if="{{replyComment.userName_to=='' || replyComment.userName_to==null}}">
+                      @{{replyComment.nickName_to}}
+                    </view>
+                </span>
+                <span class='reply' wx:if="{{openid!=replyComment.userId_to}}">
+                  <view wx:if="{{goodsComments.anonymous==1}}">
+                    @匿名用户
+                  </view>
+                  <view wx:if="{{goodsComments.anonymous==0}}">
+                    <view wx:if="{{replyComment.userName_to!='' && replyComment.userName_to!=null}}">
+                      @{{replyComment.userName_to}}
+                    </view>
+                    <view wx:if="{{replyComment.userName_to=='' || replyComment.userName_to==null}}">
+                      @{{replyComment.nickName_to}}
+                    </view>
+                  </view>
+                </span>
+                ：{{replyComment.replyContent}}</view>
+            </view>
+          </view>
+
+        </view>
+      </view>
+    </view>
+  
+    <form bindsubmit="replyCommentHandler">
+      <view class="release" hidden="{{!releaseFocus}}">   
+       <textarea class="text" name='content' value='{{content}}' placeholder-class="input_null" fixed="true" maxlength="-1" show-confirm-bar="false" cursor-spacing="15" auto-height="true" focus="{{releaseFocus}}" placeholder="回复@ {{releaseName}}"></textarea>
+       <button class="submit" formType="submit">发送</button>      
+      </view>
+    </form>
+  </scroll-view>
+
+      
+
+</view>

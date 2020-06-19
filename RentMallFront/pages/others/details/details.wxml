@@ -1,0 +1,190 @@
+
+<swiper indicator-dots="{{indicatorDots}}" autoplay="{{autoplay}}" circular="true" interval="{{interval}}" duration="{{duration}}">
+  <block wx:for="{{imgUrls}}" wx:key="unique">
+    <swiper-item>
+      <image src="{{item}}" data-src="{{item}}" bindtap="previewImage" mode='aspectFit'></image>
+    </swiper-item>
+  </block> 
+</swiper>
+<scroll-view scroll-y="true">
+  <view class="detail" >
+    <text class="title">{{goodmsg.goodName}}</text>
+    <text class="about">简介：{{goodmsg.introduction}}</text>
+    <view class='share'>
+    <text class="price" decode="{{true}}" wx:if="{{goodmsg.unit==0}}">&nbsp;&nbsp;￥{{goodmsg.price}}/天</text>
+     <text class="price" decode="{{true}}" wx:if="{{goodmsg.unit==1}}">&nbsp;&nbsp;￥{{goodmsg.price}}/月</text>
+    <button class='shareicon' style='flex-direction: column;' open-type="share">
+      <text class='iconfont icon-fenxiang'></text>
+      <view class='sharetext'><text>分享</text></view>
+      </button>
+      <!-- 没有收藏时显示为黑色 -->
+    <button class='shareicon' style='flex-direction: column;' bindtap='collection' data-goodid="{{goodmsg.goodId}}" wx:if="{{!iscollection}}">
+      <text class='iconfont icon-aixin'></text>
+      <view class='sharetext'><text>收藏</text></view>
+      </button>
+
+      <!-- 收藏后显示红色 -->
+    <button class='shareicon' style='flex-direction: column;' bindtap='collection' data-goodid="{{goodmsg.goodId}}" wx:if="{{iscollection}}">
+      <text class='iconfont icon-aixin' style='color:#E70510;'></text>
+      <view class='sharetext'><text>收藏</text></view>
+      </button>
+      <button class='shareicon' style='flex-direction: column;' bindtap='show3d' wx:if="{{bookmsg.show3d==1}}">
+      <text class='iconfont icon-fenxiang'></text>
+      <view class='sharetext'><text>3D</text></view>
+      </button>
+    <!-- 分享iconfont -->
+    </view>
+  </view>
+
+<view class="separate" ></view>
+
+<view class='bookclass' >
+  
+  <!-- sku选择 -->
+  <view class='details' bindtap="detailinfomation">
+  <text>详细参数</text>
+  <text class='iconfont icon-youjiantou'></text>
+  </view>
+  
+  <view class="separate"></view>
+
+  <view class='number'>
+  <view class='numberchangeleft'>
+    <text bindtap="toggleDialog">请选择租赁数量</text>
+  </view> 
+  <!-- 选择修改 -->
+    <view class='numberchange' wx:if="{{goodmsg.num>0}}">
+        <image class='minus_icon' src='/images/minusnumber.png' catchtap='minusNum'></image>
+        <text class='shop_num'>{{rentNumber}}</text>
+        <image class='add_icon' src='/images/addnumber.png' catchtap='addNum'></image>
+    </view>
+    <view class='short' wx:if="{{goodmsg.num==0}}">
+        <text class='shop_num'>暂时无货哦~</text>
+    </view>
+  </view>
+
+  <view class="separate"></view>
+
+
+<view class='number'>
+  <view class='numberchangeleft'>
+    <text bindtap="toggleDialog">请选择租赁时长</text>
+  </view> 
+  <!-- 选择修改 -->
+    <view class='numberchange' wx:if="{{goodmsg.num>0}}">
+        <image class='minus_icon' src='/images/minusnumber.png' catchtap='minusTime'></image> 
+        <text class='shop_num'>{{rentTime}}</text>
+        <image class='add_icon' src='/images/addnumber.png' catchtap='addTime'></image>
+        <text wx:if="{{goodmsg.unit==0}}">天</text>
+        <text wx:if="{{goodmsg.unit==1}}">月</text>
+    </view>
+    <view class='short' wx:if="{{goodmsg.num==0}}">
+        <text class='shop_num'>暂时无货哦~</text>
+    </view>
+  </view>
+
+  <view class="separate"></view>
+
+
+<!-- 评论内容 start -->
+  <view>
+  <view class="label-title" style="border-bottom:1px solid #eee;" wx:if="{{comments.length>0}}">商品评价<text style="color:red">（{{comments.length}}）</text></view>
+  <view class="label-title" style="border-bottom:1px solid #eee;" wx:if="{{comments.length<=0}}">商品评价<text style="color:red">（该商品暂无评价哦~）</text></view>
+      <block wx:for="{{comments}}" wx:key="item">
+         <view class='saidan-wrapper'> 
+
+            <view class="orderListTitle"> 
+	          	<view class="userImg" wx:if="{{item.anonymous!=1}}" mode="aspectFit"><image src="{{item.avatarUrl}}"></image></view>
+              <view class="userImg" wx:if="{{item.anonymous==1}}" mode="aspectFit"><image src="../../../images/noName.png"></image></view>
+	          	<text class="userName" wx:if="{{item.anonymous==1}}">匿名用户</text>
+              <view wx:else>
+              <text class="userName" wx:if="{{ item.userName!='' && item.userName!=null}}">{{item.userName}}</text>
+              <text class="userName" wx:if="{{item.userName=='' || item.userName==null}}">{{item.nickName}}</text>
+              </view>
+		          <!-- 星星评价结束 -->
+              <view class="comment1-description">
+                <view class="star-pos" style="display:flex;flex-direction:row;">
+                <image class="stars" wx:if="{{item.degree<1}}" src="/images/star1.png"></image>
+                <image class="stars on" wx:if="{{item.degree>=1}}" src="/images/star2.png"></image>
+                <image class="stars" wx:if="{{item.degree<2}}" src="/images/star1.png"></image>
+                <image class="stars on" wx:if="{{item.degree>=2}}" src="/images/star2.png"></image>
+                <image class="stars" wx:if="{{item.degree<3}}" src="/images/star1.png"></image>
+                <image class="stars on" wx:if="{{item.degree>=3}}" src="/images/star2.png"></image>
+                <image class="stars" wx:if="{{item.degree<4}}" src="/images/star1.png"></image>
+                <image class="stars on" wx:if="{{item.degree>=4}}" src="/images/star2.png"></image>
+                <image class="stars" wx:if="{{item.degree<5}}" src="/images/star1.png"></image>
+                <image class="stars on" wx:if="{{item.degree>=5}}" src="/images/star2.png"></image>
+                </view>
+              </view>
+              <!-- 星星评价结束 -->
+	          </view>
+
+            <view class='saidan-bottom'>
+              <view class='saidan-content' wx:if="{{item.content!=null && item.content!=''}}">{{item.content}}</view>
+              <view class='saidan-content' wx:else>该用户没有留下文字评价！</view>
+            </view>
+            <view class='product-type'>
+            <view class='product-type_info' wx:if="{{item.idState==1 || item.score<0}}">
+                <text>账号被封，请注意评论真实性！</text>
+              </view>
+              <view class='product-type_num'>
+                <icon class='icon iconfont icon-zan-copy'>
+                <image class="garbage_img" src="/images/garbage.png" bindtap="deleteComment" data-commentid="{{item.commentId}}" data-index="{{index}}" wx:if="{{item.commentUserId==userId}}"></image>{{item.date}}</icon>
+              </view>
+            </view>
+          </view>
+      </block>
+  </view>
+
+
+  <view class="separate"></view>
+  <view class="temp"></view>
+</view>
+
+
+<view class='bottom_blank'></view>
+</scroll-view>
+
+<!-- 底部悬浮栏 -->
+<view class="detail-nav">
+  <image bindtap="toHome" src="../../../images/home.png" />
+  <view class="line_nav"></view>
+  <image bindtap="toCar" src="../../../images/shopcar.png" />
+  <view class="line_nav"></view>
+  <image bindtap="toContent" src="../../../images/content.png" data-goodid="{{goodmsg.goodId}}"></image>
+  <button class="button-green" bindtap="addCar"  formType="submit">加入购物车</button>
+  <button class="button-red" bindtap="immeBuy"  formType="submit">立即租赁</button>
+</view>
+
+
+<!-- 抽屉层开始，这里显示商品的详细参数 -->
+<view class="shop-select-info" hidden="{{isShowSelectInfo}}">
+  <view class="mask-layer" catchtouchstart="hiddenSelectInfo"></view>
+  <view class="shop-select-info-content">
+
+    <!--商品图片和价格、库存-->
+    <view>
+    <view class="ui-flex ui-padding-10">
+     <view class='select-image'>
+       <image class="select-info-img" src="{{goodmsg.image1}}" mode='aspectFit'></image> <!-- 这里填写商品图片 -->
+     </view>
+        <view class="select-info-price">
+          <text decode="{{true}}" wx:if="{{goodmsg.unit==0}}">￥{{goodmsg.price}}&nbsp;元/天</text>
+          <text decode="{{true}}" wx:if="{{goodmsg.unit==1}}">￥{{goodmsg.price}}&nbsp;元/月</text>  
+        </view>
+        <view class="select-info-price">
+           <text>库存：{{goodmsg.num}}</text>
+        </view>
+      <!--关闭弹窗按钮-->
+      <icon type="clear" class="select-info-close" catchtap="hiddenSelectInfo"></icon>
+     
+    </view>
+      <view class="goodDetail">
+          <text>详细参数：</text>
+          <text>{{goodmsg.goodDetail}}</text>
+      </view>
+    </view>
+    
+  </view>
+</view>
+<!-- 抽屉层结束 -->

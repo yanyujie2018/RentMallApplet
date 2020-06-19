@@ -1,0 +1,166 @@
+<!--index.wxml-->
+
+<view class='top'>
+<!-- 搜索条开始 -->
+<view class='container'>
+  <view  class='search_input' bindtap='search_page'>
+    <icon type="search" size="15" class='search_icon' />
+    <input  placeholder='请输入关键字' placeholder-class="search_placeholder" value="{{inputValue}}" bindinput="blur"></input>
+    <image src='../public_imgs/del.png' class='cancle_btn' wx:if="{{inputValue}}" bindtap='clean'></image>
+  </view>
+  </view>
+  <!-- 搜索条结束 -->
+
+  <!--跑马灯开始-->
+  <view class='swiper'>
+<swiper class="swiper_container" vertical="true" autoplay="true" circular="true" interval="2000">
+  <block wx:for="{{msgList}}" wx:key="unique">
+   <navigator url="/pages/index/index?title={{item.url}}" open-type="navigate">
+    <swiper-item>
+     <view class="swiper_item">{{item.title}}</view>
+    </swiper-item>
+   </navigator>
+  </block>
+ </swiper>
+ </view>
+<!--跑马灯结束-->
+
+<!-- 模块分区开始 -->
+<view class='module'>
+      <view class='list resoutuijian'>
+        <view class='content_text'> 
+        <text class='title'>热搜推荐</text>
+        <!-- 设置bind函数实现跳转 -->
+        <text class='turntodetail' bindtap='resoutuijian'>查看更多 ></text>
+        </view>
+        <view class='content_list'>
+          <view class='example' wx:for="{{resoutuijian}}" data-goodid="{{item.goodId}}" wx:key="{{item.goodId}}" wx:if="{{index<3}}" bindtap="toDetail">
+            <view class='example_list'>
+            <view class='top_pic'>
+                  <image class='example_pic' src="{{item.image1}}" mode='aspectFit'></image>
+            </view>
+            <view class='introduce'>
+            <text class="name">{{item.goodName}}</text>
+            <text class="sku-price" wx:if="{{item.unit==0}}">￥{{item.price}}/天</text>
+            <text class="sku-price" wx:if="{{item.unit==1}}">￥{{item.price}}/月</text>
+            </view>
+            </view>
+          </view>
+          
+        </view>
+      </view>
+
+    <view class='list jingpinhaoshu'>
+        <view class='content_text'>
+        <text class='title'>精品好书</text> <!-- 显示浏览次数最多的三个书籍类商品 -->
+        <text class='turntodetail'  bindtap='jingpinhaoshu'>查看更多 ></text>
+        </view>
+     <view class='content_list'>
+      <view class='example' wx:for="{{jingpinhaoshu}}" data-goodid="{{item.goodId}}" wx:key="{{item.goodId}}" wx:if="{{index<3}}" bindtap="toDetail">
+            <view class='example_list'>
+            <view class='top_pic'>
+                  <image class='example_pic' src="{{item.image1}}" mode='aspectFit'></image> <!-- 填商品图片地址 -->
+            </view>
+            <view class='introduce'>
+            <text>{{item.goodName}}</text>
+            <text class="sku-price" wx:if="{{item.unit==0}}">￥{{item.price}}/天</text>
+            <text class="sku-price" wx:if="{{item.unit==1}}">￥{{item.price}}/月</text>
+            </view>
+            </view>
+          </view>
+       </view>
+    </view>
+
+    <view class='list xinshuremai'>
+      <view class='content_text'>
+      <text class='title'>新品热卖</text>  <!-- 显示最近发布的三个商品 -->
+      <text class='turntodetail' bindtap='xinpinremai'>查看更多 ></text>
+      </view>
+      <view class='content_list'>
+     <view class='example' wx:for="{{xinpinremai}}" data-goodid="{{item.goodId}}" wx:key="{{item.goodId}}" wx:if="{{index<3}}" bindtap="toDetail">
+            <view class='example_list'>
+            <view class='top_pic'>
+                  <image class='example_pic' src="{{item.image1}}" mode='aspectFit'></image>
+            </view>
+            <view class='introduce'>
+            <text>{{item.goodName}}</text>
+            <text class="sku-price" wx:if="{{item.unit==0}}">￥{{item.price}}/天</text>
+            <text class="sku-price" wx:if="{{item.unit==1}}">￥{{item.price}}/月</text>
+            </view>
+            </view>
+          </view>
+     </view>
+    </view>
+
+     <view class='list jikemiaosha'>
+        <view class='content_text'> 
+        <text class='title'>出行好物</text>  <!-- 显示浏览数最多的三个出行工具 -->
+        <text class='turntodetail' bindtap='chuxinhaowu'>查看更多 ></text>
+        </view>
+        <view class='content_list'>
+          <view class='example' wx:for="{{chuxinhaowu}}" data-goodid="{{item.goodId}}" wx:key="{{item.goodId}}"  wx:if="{{index<3}}" bindtap="toDetail">
+            <view class='example_list'>
+            <view class='top_pic'>
+                  <image class='example_pic' src="{{item.image1}}" mode='aspectFit'></image>
+            </view>
+            <view class='introduce'>
+            <text>{{item.goodName}}</text>
+            <text class="sku-price" wx:if="{{item.unit==0}}">￥{{item.price}}/天</text>
+            <text class="sku-price" wx:if="{{item.unit==1}}">￥{{item.price}}/月</text>
+            </view>
+            </view>
+          </view>
+          
+        </view>
+      </view>
+
+
+</view>
+
+      <view class='list ershoujiushu'>
+        <view class='content_text'> 
+        <text class='title'>电子风暴</text>   <!-- 显示浏览量最多的三个电子产品 -->
+        <!-- 设置bind函数实现跳转 -->
+        <text class='turntodetail' bindtap='dianzifengbao'>查看更多 ></text>
+        </view>
+        <view class='content_list'>
+          <view class='example' wx:for="{{dianzifengbao}}" data-goodid="{{item.goodId}}" wx:key="{{item.goodId}}" wx:if="{{index<3}}" bindtap="toDetail">
+            <view class='example_list'>
+            <view class='top_pic'>
+                  <image class='example_pic' src="{{item.image1}}" mode='aspectFit'></image>
+            </view>
+            <view class='introduce'>
+            <text>{{item.goodName}}</text>
+            <text class="sku-price" wx:if="{{item.unit==0}}">￥{{item.price}}/天</text>
+            <text class="sku-price" wx:if="{{item.unit==1}}">￥{{item.price}}/月</text>
+            </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    <view class='list ershouzahuo'>
+        <view class='content_text'> 
+        <text class='title'>杂货出租</text>  <!-- 显示浏览数最多的三条 日用品或其他 商品 -->
+        <!-- 设置bind函数实现跳转 -->
+        <text class='turntodetail' bindtap='zahuochuzu'>查看更多 ></text>
+        </view>
+        <view class='content_list'>
+          <view class='example' wx:for="{{zahuochuzu}}" data-goodid="{{item.goodId}}" wx:key="{{item.goodId}}" wx:if="{{index<3}}" bindtap="toDetail">
+            <view class='example_list'>
+            <view class='top_pic'>
+                  <image class='example_pic' src="{{item.image1}}" mode='aspectFit'></image>
+            </view>
+            <view class='introduce'>
+            <text>{{item.goodName}}</text>
+            <text class="sku-price" wx:if="{{item.unit==0}}">￥{{item.price}}/天</text>
+            <text class="sku-price" wx:if="{{item.unit==1}}">￥{{item.price}}/月</text>
+            </view>
+            </view>
+          </view>
+          
+        </view>
+      </view>
+
+
+<!-- 模块分区结束 -->
+</view>

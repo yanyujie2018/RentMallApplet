@@ -1,0 +1,138 @@
+<view class='all'>
+<!--<image class='orderseccess' src='/images/orderseccess.png'></image>-->
+
+<view class='goodslist'>
+  <view class='title'>
+  <text class='iconfont icon-quanbudingdan'></text>
+  <text>校园二手租赁商城</text>
+  </view>
+  <view class='list'>
+    <view class='img'>
+      <image src='{{itemdetail.image1}}' mode="aspectFit"></image> <!-- 这里放商品图片 -->
+    </view>
+    <view class='content'>
+    <view class='text1'>{{itemdetail.goodName}}</view>
+    <view class='text2'>
+      <text>￥{{itemdetail.price}}</text>
+      <text>×{{itemdetail.rentNum}}</text>
+    </view>
+    </view>
+  </view>
+
+  <!-- 分割线 -->
+<view class="divLine"></view>
+  <!-- 结算栏目 -->
+  <view class='balance'>
+
+    <view class='left'>
+      <text>押金</text>
+      <text>实付款（含押金）</text>
+    </view>
+
+    <view class='right'>
+      <text>￥{{itemdetail.deposit}}</text>
+      <text>￥{{itemdetail.rentNum*itemdetail.price+itemdetail.deposit}}</text>
+    </view>
+
+  </view>
+</view>
+
+
+<view class='ordermsg'>
+  <view class='title'>
+    <text class='iconfont icon-imp' style='color:#FF3800;'></text>
+    <text>订单信息</text>
+  </view>
+
+<view class='contents'>
+  <view class='left'>
+    <text>订单备注：</text>
+    <text>订单编号：</text>
+    <text>付款时间：</text>
+  </view>
+
+    <view class='right'>
+    <text>{{remarks}}</text>
+    <text>{{itemdetail.id}}</text>  <!-- 以租赁表中的id作为订单编号 -->
+    <text>{{itemdetail.payDate}}</text>
+  </view>
+</view>
+
+
+
+<!-- 状态 待收货 -->
+<view wx:if="{{itemdetail.rentState==1 && status==2}}">
+  <view class='item-info-4'>
+    <view class=' operation'>
+      <view class='payment' catchtap='goReceive' data-id='{{itemdetail.id}}'>点击收货</view>
+    </view>
+  </view>
+</view>
+
+<view wx:if="{{itemdetail.rentState==0 && status==2}}">
+  <view class='item-info-4'>
+    <view class=' operation'>
+      <view class=' payment' wx:if="{{itemdetail.idState==0}}" catchtap='goUrgeDelivery' data-id='{{itemdetail.id}}'>催促发货</view>
+      <view class=' rent' wx:if="{{itemdetail.idState==1}}">该物主已被封，将不再发货！</view>
+    </view>
+  </view>
+</view>
+
+<!-- 状态 待发货 -->
+<view wx:if="{{itemdetail.rentState==0 && status==1}}">
+  <view class='item-info-4'>
+    <view class=' operation'>
+      <view class=' payment' catchtap='goSend' data-id='{{itemdetail.id}}'>点击发货</view>
+    </view>
+  </view>
+</view>
+
+<!-- 状态 待归还 -->
+<view wx:if="{{itemdetail.rentState==3 && status==3}}">
+  <view class='item-info-4'>
+    <view class=' operation'>
+      <view class=' payment' catchtap='goReturn' data-id='{{itemdetail.id}}'>点击归还</view>  <!-- 唤起电话服务 -->
+    </view>
+  </view>
+</view>
+
+<!-- 状态 待收回 -->
+<view wx:if="{{itemdetail.rentState==7 || itemdetail.rentState==3 && status==6}}">
+  <view class='item-info-4'>
+    <view class=' operation'>
+      <view class=' payment' catchtap='goRecovery' data-id='{{itemdetail.id}}' data-goodid="{{itemdetail.goodId}}" data-rentnum="{{itemdetail.rentNum}}" wx:if="{{itemdetail.rentState==7}}">点击收回</view>
+      <view class=' payment' catchtap='goUrge' data-id='{{itemdetail.id}}' wx:if="{{itemdetail.rentState==3}}">催促归还</view>
+    </view>
+  </view>
+</view>
+
+<!-- 状态 租用中 -->
+<view wx:if="{{itemdetail.rentState==2}}">
+  <view class='item-info-4'>
+    <view class=' operation'>
+      <view class=' rent' wx:if="{{itemdetail.releaseId==openid}}">正在出租</view>
+      <view class=' rent' wx:if="{{itemdetail.rentId==openid}}">正在租用</view>
+    </view>
+  </view>
+</view>
+
+<!-- 已完成 -->
+<view wx:if="{{status==5 && openid==itemdetail.rentId}}">
+  <view class='item-info-4'>
+    <view class=' operation'>
+      <view class='payment' catchtap='goRemark' data-goodid='{{itemdetail.goodId}}' data-id="{{itemdetail.id}}" data-releaseid="{{itemdetail.releaseId}}" data-rentstate="{{itemdetail.rentState}}" wx:if="{{itemdetail.rentState==4 || itemdetail.rentState==5}}">评价</view>
+      <view class='payment' catchtap='goConsult' data-goodid='{{itemdetail.goodId}}' data-id="{{itemdetail.id}}" data-releaseid="{{itemdetail.releaseId}}" data-rentstate="{{itemdetail.rentState}}" wx:if="{{itemdetail.rentState==8 || itemdetail.rentState==5}}">协商</view>
+    </view>
+  </view>
+</view>
+<view wx:if="{{status==5 && openid==itemdetail.releaseId}}">
+  <view class='item-info-4'>
+    <view class=' operation'>
+      <view class='payment' catchtap='goConsult2' data-goodid='{{itemdetail.goodId}}' data-id="{{itemdetail.id}}" data-releaseid="{{itemdetail.releaseId}}" data-rentstate="{{itemdetail.rentState}}" wx:if="{{itemdetail.rentState==8 || itemdetail.rentState==5}}">协商</view>
+    </view>
+  </view>
+</view>
+
+
+</view> 
+</view>

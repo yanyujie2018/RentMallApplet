@@ -1,0 +1,90 @@
+<!--pages/setting/setting.wxml-->
+<text class='class_title'>基础信息</text>
+<view class='information'>
+  <view class="weui-cells weui-cells_after-title" catchtap='_prefect' data-content="{{RealName}}">
+    <view class="weui-cell weui-cell_input">
+      <view class="weui-cell__hd">
+        <view class="weui-label">姓名</view>
+      </view>
+      <view class="weui-cell__bd">
+        <view class='weui-input allOrder {{RealName==="去完善" ? "sizeColor" : ""}}'>{{RealName}}</view>
+      </view>
+    </view>
+  </view>
+  <view class="weui-cells weui-cells_after-title" catchtap='_showGender'>
+    <view class="weui-cell weui-cell_input">
+      <view class="weui-cell__hd">
+        <view class="weui-label">性别</view>
+      </view>
+      <view class="weui-cell__bd">
+        <picker range="{{UserGender}}" value="{{index}}" bindchange="bindPickerChange">
+          <view class="weui-input allOrder">{{UserGender[index] || UserSex || '请选择性别'}}</view>
+        </picker>
+      </view>
+    </view>
+  </view>
+  <view class="weui-cells weui-cells_after-title">
+    <view class="weui-cell weui-cell_input">
+      <view class="weui-cell__hd">
+        <view class="weui-label">生日</view>
+      </view>
+      <view class="weui-cell__bd">
+        <picker mode="date" value="{{UserBirthday}}" start="1900-01-01" end="2099-01-01" bindchange="bindDateChange">
+          <view class="weui-input allOrder">{{UserBirthday}}</view>
+        </picker>
+      </view>
+    </view>
+  </view>
+  <view class="weui-cells weui-cells_after-title" catchtap='_idCard' data-content="{{UserCardNo}}">
+    <view class="weui-cell weui-cell_input">
+      <view class="weui-cell__hd">
+        <view class="weui-label">身份证</view>
+      </view>
+      <view class="weui-cell__bd">
+        <view class="weui-input allOrder">{{UserCardNo}}</view>
+      </view>
+    </view>
+  </view>
+  <view class="weui-cells weui-cells_after-title" catchtap='_mobilePhone' data-phone='{{UserMobile}}'>
+    <view class="weui-cell weui-cell_input">
+      <view class="weui-cell__hd">
+        <view class="weui-label">绑定手机</view>
+      </view>
+      <view class="weui-cell__bd">
+        <view class='weui-input allOrder {{UserMobile==="未绑定" ? "sizeColor" : ""}}' data-phone='{{UserMobile}}'>{{UserMobile}}</view>
+      </view>
+    </view>
+  </view>
+  <view class="weui-cells weui-cells_after-title" catchtap='_wxNumber' data-content="{{UserWxNo}}">
+    <view class="weui-cell weui-cell_input">
+      <view class="weui-cell__hd">
+        <view class="weui-label">绑定微信号</view>
+      </view>
+      <view class="weui-cell__bd">
+        <view class="weui-input allOrder">{{UserWxNo}}</view>
+      </view>
+    </view>
+  </view>
+  <view class="weui-cells weui-cells_after-title" catchtap='_wxSchool' data-content="{{school}}">
+    <view class="weui-cell weui-cell_input">
+      <view class="weui-cell__hd">
+        <view class="weui-label">学校</view>
+      </view>
+      <view class="weui-cell__bd">
+          <view class="weui-input allOrder">{{school}}</view>
+      </view>
+    </view>
+  </view>
+</view>
+
+
+
+<text class='class_title'>更多</text>
+<view class='information other'>
+  <view catchtap='clearStorge'>
+    <text>清除缓存</text>
+    <text class='allOrder'></text>
+  </view>
+</view>
+
+<view style='height:20rpx;'></view>

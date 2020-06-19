@@ -1,0 +1,110 @@
+<!--pages/chat/chat.wxml-->
+
+<!-- 这里可以先显示商品情况 -->
+<view class='tab'>
+  <view class='lan'>{{goodmsg.goodName}}</view>
+  <view class='tent'>
+    <text>{{goodmsg.introduction}}</text>
+    <text class='fl_r '>{{tabdata.num}}</text>
+  </view>
+
+   <view class='showPic' style='background:white'>
+      <view class="previewimg">
+      <image mode='widthFix' class='image' src="{{goodmsg.image1}}" data-src="{{goodmsg.image1}}"></image>
+      </view>
+      <view class="clear" style='clear: both;'></view>
+  </view>
+
+  <view class='xiahuaxian1'></view>
+  <view>
+    <text class='fabu'>发布时间: {{goodmsg.releaseDate}}</text>
+  </view>
+</view>
+<!-- 这里显示聊天内容 -->
+<view class='news'>
+  <view class='xiahuaxian1 xiahuaxia'></view>
+  <!-- <view class='new_top_txt' wx:if="{{usermsg.userName=='' || usermsg.userName==null}}">您正在与{{usermsg.nickName}}进行沟通</view>  -->
+  <view class='new_top_txt'>您正在与{{chatName}}进行沟通</view>
+  <view class="historycon">
+   <!-- 显示主聊天信息 -->
+    <view class="history" wx:if="{{chatmsg!=null}}">
+    <view>
+        <text class='time'>{{chatmsg.chatDate}}  {{chatmsg.chatTime}}</text>
+    </view>
+    <block wx:if="{{chatmsg.chatRightId==openId}}">  <!-- wx:if="{{item.is_show_right ==1}}" 显示在右边的聊天信息 -->
+        <view class='my_right'>
+          <view class='page_row'>
+          <!--发送的信息不是图片那么就显示文字，如果发送的信息是图片，那么就显示图片-->
+            <view><text wx:if='{{!chatmsg.isImage}}' class='new_txt'>{{chatmsg.chatContent}}</text></view>
+            <image wx:if='{{chatmsg.isImage}}' src='{{chatmsg.chatContent}}' class='new_imgtent'></image>
+            <!-- 显示用户头像 -->
+            <image class='new_img' bindtap="goHome" data-avat="{{avatarUrl_R}}" src='{{avatarUrl_R}}'></image>
+          </view>
+        </view>
+
+      </block>
+      <block wx:else>  <!-- 是显示在左边的 -->
+        <view class='you_left'>
+          <view class='page_row'>
+            <image class='new_img' bindtap="goHome" data-avat="{{avatarUrl_L}}" src='{{avatarUrl_L}}'></image>
+             <!--  区分是不是图片信息-->
+            <view><text wx:if='{{!chatmsg.isImage}}' class='new_txt'>{{chatmsg.chatContent}}</text></view>
+            <image wx:if='{{chatmsg.isImage}}' src='{{chatmsg.content}}' class='new_imgtent'></image>
+            
+
+          </view>
+        </view>
+      </block>
+      </view>
+
+    <!-- 显示主信息下的附属聊天信息 -->
+    <scroll-view scroll-y="true" scroll-top="{{scrollTop}}" class="history" wx:for="{{chatmsg.afterChatList}}" wx:key='{{index}}'>
+      <view>
+        <text class='time'>{{item.chatDate}}  {{item.chatTime}}</text>
+      </view>
+      <block wx:if="{{item.chatRightIdA==openId}}">  <!-- wx:if="{{item.is_show_right ==1}}" 显示在右边的聊天信息 -->
+        <view class='my_right'>
+          <view class='page_row'>
+          <!--发送的信息不是图片那么就显示文字，如果发送的信息是图片，那么就显示图片-->
+            <view><text wx:if='{{!item.isImage}}' class='new_txt'>{{item.chatContent}}</text>  </view>
+            <image wx:if='{{item.isImage}}' src='{{item.chatContent}}' class='new_imgtent'></image>
+
+            <!-- 这里是我自己的，显示用户头像 -->
+            <image class='new_img' bindtap="goHome" data-avat="{{avatarUrl_R}}" src='{{avatarUrl_R}}'></image>
+            
+
+          </view>
+        </view>
+      </block>
+      <block wx:else>  <!-- 是显示在左边的 -->
+        <view class='you_left'>
+          <view class='page_row'>
+            <image class='new_img' bindtap="goHome" data-avat="{{avatarUrl_L}}"  src='{{avatarUrl_L}}'></image>
+             <!--  原来的，区分是不是图片信息-->
+            <!--<view wx:if='{{!item.isImage}}' class='sanjiao you'></view>-->
+            <view><text wx:if='{{!item.isImage}}' class='new_txt'>{{item.chatContent}}</text></view>
+            <image wx:if='{{item.isImage}}' src='{{item.chatContent}}' class='new_imgtent'></image>
+            
+
+          </view>
+        </view>
+      </block>
+    </scroll-view>
+  </view>
+</view>
+<view class='hei' id="hei"></view>
+
+
+ <form bindsubmit="sentChat">
+    <view class="release" >
+      <textarea class="text" name='content' value='{{content}}' placeholder-class="input_null" fixed="true" maxlength="-1" show-confirm-bar="false" cursor-spacing="15" bindinput="chatInput" auto-height="true" ></textarea>
+      <button class="submit" formType="submit">发送</button>
+      <image bindtap="upimg1" class='jia_img' src='../../../../../images/addnumber.png'></image>
+    </view>
+  </form>
+  
+
+
+
+
+

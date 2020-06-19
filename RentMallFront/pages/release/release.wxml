@@ -1,0 +1,133 @@
+<!--pages/release/release.wxml-->
+
+<!-- 商品 -->
+<view wx:if="{{postBook}}" class='outside_border'>
+  <view class='tip'>
+    提示：请确保发布物品信息真实完整，这有利于您的商品被更多人检索到。
+  </view>
+  <view class="weui-panel">
+  
+
+      <view class="title_right">
+        <view class="weui-cell weui-cell_input">
+          <view>
+            <view class="weui-label">名称</view>
+          </view>
+          <view class="weui-cell__bd">
+            <input class="weui-input" placeholder="请输入物品名称" bindinput="bindNameInput" value="{{goodName}}" />
+          </view>
+        </view>
+
+        <view class="weui-cell weui-cell_input">
+          <view class="weui-cell__hd">
+            <view class="weui-label">价格</view>
+          </view>
+          <view class="weui-cell__bd">
+            <input class="weui-input" placeholder="请输入出租价格（元）" bindinput="bindCurrentPriceInput" value="{{currentPrice}}" type="digit" />
+          </view>
+        </view>
+
+        <view class="weui-cell weui-cell_select">
+          <view class="weui-cell__hd weui-cell__hd_in-select-after">
+            <view class="weui-label">单位</view>
+         </view>
+         <view class="weui-cell__bd">
+           <picker bindchange="bindSettlementUnitChange" value="{{unitIndex}}" range="{{settlementUnit}}">
+             <view class="weui-select weui-select_in-select-after">{{settlementUnit[unitIndex]}}</view>
+            </picker>
+         </view>
+        </view>
+
+        <view class="weui-cell weui-cell_input">
+          <view class="weui-cell__hd">
+            <view class="weui-label">押金</view>
+          </view>
+          <view class="weui-cell__bd">
+            <input class="weui-input" placeholder="请输入出租押金（元）" bindinput="bindDepositInput" value="{{deposit}}" type="number" />
+          </view>
+        </view>
+      </view>
+   <!-- </view> -->
+
+    <!-- 下半部分布局 -->
+    <view class="weui-panel">
+      <view class="weui-cell weui-cell_select">
+        <view class="weui-cell__hd weui-cell__hd_in-select-after">
+          <view class="weui-label">介绍</view>
+        </view>
+        <view class="weui-cell__bd">
+          <input class="weui-input" placeholder="请输入商品简介" bindinput="bindIntroduceInput" value="{{introduce}}" />
+        </view>
+      </view>
+
+      <view class="weui-cell weui-cell_select">
+        <view class="weui-cell__hd weui-cell__hd_in-select-after">
+          <view class="weui-label">类别</view>
+        </view>
+        <view class="weui-cell__bd">
+          <picker bindchange="bindTypeChange" value="{{typeIndex}}" range="{{goodType}}">
+            <view class="weui-select weui-select_in-select-after">{{goodType[typeIndex]}}</view>
+          </picker>
+        </view>
+      </view>
+
+       <view class="weui-cell weui-cell_select">
+        <view class="weui-cell__hd weui-cell__hd_in-select-after">
+          <view class="weui-label">数量</view>
+        </view>
+        <view class="weui-cell__bd">
+          <input class="weui-input" placeholder="请输入商品数量" bindinput="bindNumInput" value="{{num}}" type="number"/>
+        </view>
+      </view>
+      
+
+        <view class="weui-cell weui-cell_input">
+          <view class="weui-cell__hd">
+            <view class="weui-label">归还期限</view>
+          </view>
+          <view class="weui-cell__bd">
+            <picker bindchange="bindReturnChange" style="width:563rpx" value="{{returnIndex}}" range="{{returnPeriod}}">
+              <view class="weui-select weui-select_in-select-after">{{returnPeriod[returnIndex]}}</view>
+            </picker>
+          </view>
+        </view>
+        
+      <view class="weui-cell weui-cell_input">
+        <view class="weui-cell__hd">
+          <view class="weui-label">商品详细参数</view>
+        </view>
+        <view class="weui-cell__bd">
+          <!-- 使用auto-height="true" 可以实现文本区域高度的自适应 -->
+          <!-- 这里感觉还是固定高度比较好看，所以未采用自适应 -->
+          <!-- textarea最大的大小一般为200个字，maxlength可以增加字数限制 -->
+          <textarea class="weui-input describe_thing" value='{{thingDescribe}}' bindinput="bindThingDescribeInput" placeholder="请输入物品的详情（500字以内）" maxlength="500" ></textarea>
+          <text class="currentWordNumber">{{currentWordNumber|0}}/{{max}}</text>
+        </view>
+      </view>
+      
+    </view>
+
+  <!--上传图片-->
+  <view class='upImv' wx:if="{{state==0}}">
+ 
+    <view class='upImv_text'>商品图片上传</view>
+    <view class="addImv">
+      <!--这个是已经选好的图片-->
+      <view wx:for="{{banner}}" wx:key="key" class="upFile" bindtap="showImageBanner" style="border-radius: 5px" data-id="{{index}}">
+        <image class="itemImv" src="{{item}}"></image>
+        <image class="closeImv" src="../../images/delete.png" mode="scaleToFill" catchtap="deleteImvBanner" data-id="{{index}}"></image>
+      </view>
+ 
+      <!--这个是选择图片-->
+      <view class="chooseView" bindtap="bindImageInput" style="border-radius: 5px" wx:if="{{chooseViewShowBanner}}">
+        <image class="chooseImv" src="/images/tianjia.png"></image>
+      </view>
+    </view>
+  </view>
+    
+    <button type="primary" size="default" disabled="{{goodName == ''|| currentPrice == ''||  banner.length== 0 || thingDescribe == '' || deposit =='' ||num=='' || introduce==''? true : false}}" loading="{{buttonLoading}}" bindtap="bindSubmitThing" wx:if="{{state==0}}">
+    立即发布 </button>
+    <button type="primary" size="default" disabled="{{goodName == ''|| currentPrice == ''||  banner.length== 0 || thingDescribe == '' || deposit =='' ||num=='' || introduce==''? true : false}}" loading="{{buttonLoading}}" bindtap="modifyGood" data-goodid="{{goodId}}" wx:if="{{state==1}}">
+    修改</button>
+  </view>
+</view>

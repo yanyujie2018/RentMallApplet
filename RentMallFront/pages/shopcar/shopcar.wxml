@@ -1,0 +1,93 @@
+<!--pages/shopcar/shopcar.wxml--> 
+<view class='shopcar_contain' hidden='{{emptyjudge}}'>
+<scroll-view class="scroll" scroll-y="true">
+  <view class="separate"></view>
+
+  <view wx:for="{{carts}}" data-index="{{index}}">
+    <view class="touch-item {{istouchmove[index].isTouchMove ? 'touch-move-active' : ''}}" data-index="{{index}}" data-cartid="{{item.cartId}}" bindtouchstart="touchstart" bindtouchmove="touchmove">
+      <view class="cart_container">
+        <image class="item-select" bindtap="switchSelect" data-index="{{index}}" src="{{isSelect[index].ischecked?'../../images/check_HL.png':'../../images/check.png'}}" />
+
+        <image class="item-image" src="{{item.image1}}" bindtap='todetail' mode="aspectFit"></image><!-- 这里放商品的图片 -->
+          <!-- column中间列表 -->
+        <view class="column" bindtap='todetail' data-index="{{index}}" wx:if="{{item.num>0}}">   
+          <text class="title">{{item.goodName}}</text>
+          <view class="row">
+            <text class="sku-price">￥</text>
+            <text class="sku-price" wx:if="{{item.unit==0}}">{{item.price}}/天</text>
+            <text class="sku-price" wx:if="{{item.unit==1}}">{{item.price}}/月</text>
+            <text class="productOldPrice">押金￥{{item.deposit}}</text>
+          </view>  
+        </view>
+
+        <view class="column2" bindtap='todetail' wx:if="{{item.num<=0}}">   
+          <text class="title">{{item.goodName}}</text>
+          <view class="row">
+            <text class="sku-price">￥</text>
+            <text class="sku-price" wx:if="{{item.unit==0}}">{{item.price}}/天</text>
+            <text class="sku-price" wx:if="{{item.unit==1}}">{{item.price}}/月</text>
+            <text class="productOldPrice">押金￥{{item.deposit}}</text>
+          </view>  
+        </view>
+
+        <view class="sku" wx:if="{{item.num>0}}">
+         
+          <!-- 数值改变开始 -->
+          <view class='quantity' >
+              <image class='minus_icon' data-index='{{index}}' data-cartid="{{item.cartId}}" data-goodnum="{{item.num}}" data-cartnum="{{item.cartNum}}" src='/images/minusnumber.png' catchtap='decreaseCount'></image>
+              <text class='shop_num'>{{item.cartNum}}</text>
+              <image class='add_icon' data-index='{{index}}' data-cartid="{{item.cartId}}" data-goodnum="{{item.num}}" data-cartnum="{{item.cartNum}}" src='/images/addnumber.png' catchtap='addCount'></image><text>件</text>
+          </view>
+
+
+          <view class='quantity'>
+              <image class='minus_icon' data-index='{{index}}' data-cartid="{{item.cartId}}" data-goodnum="{{item.num}}" data-timelen="{{item.timeLen}}" src='/images/minusnumber.png' catchtap='decreaseLen'></image>
+              <text class='shop_num'>{{item.timeLen}}</text>
+              <image class='add_icon' data-index='{{index}}' data-cartid="{{item.cartId}}" data-goodnum="{{item.num}}" data-timelen="{{item.timeLen}}" src='/images/addnumber.png' catchtap='addLen'></image><text wx:if="{{item.unit==0}}">天</text><text wx:if="{{item.unit==1}}">月</text>
+          </view>
+          </view>
+
+          <view class="sku2" wx:if="{{item.num<=0}}">
+          <view class='shortage' >
+              <text class='shortage_num'>缺货</text>
+          </view>
+  
+          <!-- 数值改变结束 -->
+          </view>
+      </view>
+      <view class="del" catchtap="showModal" data-cartid="{{item.cartId}}" data-index="{{index}}">删除</view>
+    </view>
+    <!-- 单类间隔 -->
+    <view class="separate"></view>
+  </view>
+</scroll-view>
+<view class='reachbottom'>
+</view>
+
+
+<!-- 底部结算列表 -->
+<view class="bottom_total">
+  <view class="bottom_line"></view>
+  <view class="row">
+    <image class="item-allselect" bindtap="allSelect" src="{{isAllSelect?'../../images/check_HL.png':'../../images/check.png'}}" />
+    <text class="small_text">全选</text>
+    <text>合计:￥ </text>
+    <text class="price">{{totalMoney}}</text>
+    <button class="button-red" bindtap="toBuy" formType="submit">去结算</button>
+  </view>
+</view>
+
+</view>
+
+
+
+<!--弹窗开始-->
+<view class="modal-mask" bindtap="hideModal" catchtouchmove="preventTouchMove" wx:if="{{showModal}}"></view>
+<view class="modal-dialog" wx:if="{{showModal}}">
+  <view class="modal-title">您确认要删除吗</view>
+  <view class="modal-footer">
+    <view class="btn-cancel" bindtap="onCancel" data-status="cancel">再想想</view>
+    <view class="btn-confirm" bindtap="onConfirm" data-status="confirm">是</view>
+  </view>
+</view>
+<!-- 弹窗结束 -->

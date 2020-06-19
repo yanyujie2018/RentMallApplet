@@ -1,0 +1,4 @@
+/* pages/others/answer/answer.wxss */
+.map{
+  font-size: 50rpx;
+}

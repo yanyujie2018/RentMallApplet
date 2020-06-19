@@ -1,0 +1,180 @@
+<!--pages/message/message.wxml-->
+
+<view>
+  <view class="swiper-tab">
+    <view class="swiper-tab-list {{currentTab==0 ? 'on' : ''}}" data-current="0" bindtap="swichNav">未读评论</view>
+    <view class="swiper-tab-list {{currentTab==1 ? 'on' : ''}}" data-current="1" bindtap="swichNav">已读评论</view>
+     <view class="swiper-tab-list {{currentTab==2 ? 'on' : ''}}" data-current="2" bindtap="swichNav">留言</view>
+  </view>
+
+
+
+
+  <view >
+    <swiper current="{{currentTab}}" class="swiper-box" style="height:888px" duration="300" bindchange="bindChange">
+
+      <!-- 这里是未读评论 -->
+      <swiper-item class="swiper-item-class">
+
+
+        <scroll-view scroll-y class='scroll-view' bindscrolltoupper="upper" bindscrolltolower="lower" bindscroll="scroll" scroll-into-view="{{toView}}" scroll-top="{{scrollTop}}">
+          <view bindtap='allRead' style='color:#66CC00' wx:if="{{goodsComments.length==0}}">暂无未读评论</view>
+          <view bindtap='allRead' style='color:#66CC00' wx:else>全部标记为已读</view>
+          <view wx:for="{{goodsComments}}" wx:for-item="goodsComment" wx:key="index">
+            <view data-commentid='{{goodsComment.commentId}}' data-nickname='{{goodsComment.nickName}}' data-goodsId='{{goodsComment.commentGoodId}}' data-anonymous="{{goodsComment.anonymous}}" data-username="{{goodsComment.userName}}" data-commentuserid="{{goodsComment.commentUserId}}" data-commentgoodid="{{goodsComment.commentGoodId}}" data-index="{{index}}" catchtap="bindReply" data-state="0" style='display:block;background:white;'>
+              <view class='firstComment'>
+                <view>
+                  <view class='user-image-info-left'>
+                    <image class="user-image" wx:if="{{goodsComment.anonymous==0}}" src="{{goodsComment.avatarUrl}}" />
+                    <image class="user-image" wx:if="{{goodsComment.anonymous==1}}" src="../../images/noName.png" />
+                  </view>
+                  <view class='user-right'>
+                    <view class='user-name-tr' wx:if="{{goodsComment.userName==null || goodsComment.userName==''}}">
+                      <view class='user-name-left' wx:if="{{goodsComment.anonymous==0}}">{{goodsComment.nickName}}</view> 
+                      <view class='user-name-left' wx:if="{{goodsComment.anonymous==1}}">匿名用户</view>
+                    </view>
+                    <view class='user-name-tr' wx:else>
+                      <view class='user-name-left'  wx:if="{{goodsComment.anonymous==0}}">{{goodsComment.userName}}</view>
+                      <view class='user-name-left'  wx:if="{{goodsComment.anonymous==1}}">匿名用户</view>
+                    </view>
+                    <view class='comment-date'>{{goodsComment.date}}</view>
+                  </view>
+                  <view class='user-add'>
+                    <view class="cont" wx:if="{{goodsComment.replyNoRead>0}}">
+                      <image src="../../images/circle.png" class="user-image-circle"></image>
+                      <view class="user-cont" wx:if="{{goodsComment.replyNoRead<=99}}">{{goodsComment.replyNoRead}}</view>
+                      <view class="user-omit" wx:if="{{goodsComment.replyNoRead>99}}">...</view>
+                    </view>
+                    <image data-commentid='{{goodsComment.commentId}}' data-commentgoodid='{{goodsComment.commentGoodId}}' class="user-image-small" data-index="{{index}}" src="../../images/goReply.png" data-state="0" catchtap='backGoods' />
+                  </view>
+                  <view class="clear" style='clear: both;'></view>
+                </view>
+                <!-- 如果这条评论没有已读评论，那么会展示在未读评论区唯一的可能就是评论本身未读，那么现实评论本身内容即可 -->
+                <view class='content' wx:if="{{goodsComment.replyNoRead==0 && goodsComment.content!=null && goodsComment.content!=''}}">{{goodsComment.content}}</view>
+                <view class='content' wx:if="{{goodsComment.replyNoRead==0 && goodsComment.content==null || goodsComment.content==''}}">该用户无文字评价！</view>
+                <!-- 否则一定有未读评论，那么显示最后一条未读评论的内容即可 -->
+                 <view class='content' wx:if="{{goodsComment.replyNoRead>0}}">{{goodsComment.lastReplyContent.replyContent}}</view>
+              </view>
+            </view>
+            <view class="clear" style='clear: both;'></view>
+          </view>
+        </scroll-view>
+      </swiper-item>
+
+
+
+      <!-- 这里是已读评论的显示 -->
+      <swiper-item class="swiper-item-class">
+        <view wx:for="{{goodsAllComments}}" wx:for-item="goodsComment" wx:key="index">
+          <view data-commentid='{{goodsComment.commentId}}' data-nickname='{{goodsComment.nickName}}' data-goodsId='{{goodsComment.commentGoodId}}' data-anonymous="{{goodsComment.anonymous}}" data-username="{{goodsComment.userName}}" data-commentuserid="{{goodsComment.commentUserId}}" data-index="{{index}}" catchtap="bindReply" data-state="1" style='display:block;background:white;'>
+            <view class='firstComment'>
+              <view>
+                <view class='user-image-info-left'>
+                  <image class="user-image" wx:if="{{goodsComment.anonymous==0}}" src="{{goodsComment.avatarUrl}}" />
+                  <image class="user-image" wx:if="{{goodsComment.anonymous==1}}" src="../../images/noName.png" />
+                </view>
+                <view class='user-right'>
+                  <view class='user-name-tr' wx:if="{{goodsComment.userName==null || goodsComment.userName==''}}">
+                    <view class='user-name-left' wx:if="{{goodsComment.anonymous==0}}">{{goodsComment.nickName}}</view>
+                      <view class='user-name-left' wx:if="{{goodsComment.anonymous==1}}">匿名用户</view>
+                    </view>
+                    <view class='user-name-tr' wx:else>
+                      <view class='user-name-left'  wx:if="{{goodsComment.anonymous==0}}">{{goodsComment.userName}}</view>
+                      <view class='user-name-left'  wx:if="{{goodsComment.anonymous==1}}">匿名用户</view>
+                    </view>
+                  <view class='comment-date'>{{goodsComment.date}}</view>
+                </view>
+                <view class='user-add'>
+                    <image data-commentid='{{goodsComment.commentId}}' data-commentgoodid='{{goodsComment.commentGoodId}}' data-state="1" class="user-image-small" src="../../images/goReply.png" catchtap='backGoods' />
+                  </view>
+                <view class="clear" style='clear: both;'></view>
+              </view>
+              <!-- 如果这里没有评论下属的回复，那么就显示评论本身内容 -->
+              <view wx:if="{{goodsComment.replyTotal==0}}">
+              <view class='content' wx:if="{{goodsComment.content!=null && goodsComment.content!=''}}">{{goodsComment.content}}</view>
+              <view class='content' wx:if="{{goodsComment.content==null || goodsComment.content==''}}">该用户无文字评论！</view>
+              </view>
+              <!-- 如果这个评论下有回复，那么就显示最后一条回复的内容 -->
+              <view class='content' wx:if="{{goodsComment.replyTotal>0}}">{{goodsComment.lastReplyContent.replyContent}}</view>
+            </view>
+          </view>
+        </view>
+
+      </swiper-item>
+      <view class="clear" style='clear: both;'></view>
+
+
+      <!-- 这里是留言显示区 -->
+      <swiper-item class="swiper-item-class">
+        <scroll-view scroll-y class='scroll-view' bindscrolltoupper="upper" bindscrolltolower="lower" bindscroll="scroll" scroll-into-view="{{toView}}" scroll-top="{{scrollTop}}">
+          <view bindtap='allReadChat' style='color:#66CC00'>全部标记为已读</view>
+          <view wx:for="{{allChat}}" wx:for-item="chat" wx:key="index">
+
+            <view style='display:block;background:white;' data-index="{{index}}" data-id="{{chat.id}}" data-chatrightid="{{chat.chatRightId}}" data-chatleftid="{{chat.chatLeftId}}" bindlongtap="hindChat" wx:if="{{chat.show}}">
+
+              <view class='firstComment'>
+                <view>
+                  <view class='user-image-info-left'>
+                    <image class="user-image" src="{{chat.avatarUrl_other}}" />
+                  </view>
+                  <view class='user-right'>
+                    <view class='user-name-tr' wx:if="{{chat.userName_other==null || chat.userName_other==''}}">
+                      <view class='user-name-left' >{{chat.nickName_other}}</view>
+                    </view>
+                    <view class='user-name-tr' wx:if="{{chat.userName_other!=null && chat.userName_other!=''}}">
+                      <view class='user-name-left'>{{chat.userName_other}}</view>
+                    </view>
+                    <view class='comment-date' wx:if="{{chat.lastChat==null}}">{{chat.chatDate}}</view>
+                    <view class='comment-date' wx:if="{{chat.lastChat!=null}}">{{chat.lastChat.chatDate}}</view>
+                  </view>
+                  <view class='user-add'>
+                    <view class="cont" wx:if="{{chat.noRead>0}}">
+                      <image src="../../images/circle.png" class="user-image-circle"></image>
+                      <view class="user-cont" wx:if="{{chat.noRead<=99}}">{{chat.noRead}}</view>
+                      <view class="user-omit" wx:if="{{chat.noRead>99}}">...</view>
+                    </view>
+                    <image data-id='{{chat.id}}' data-chatgoodid='{{chat.chatGoodId}}' class="user-image-small" data-index="{{index}}" data-chatrightid="{{chat.chatRightId}}" data-chatleftid="{{chat.chatLeftId}}" src="../../images/goReply.png" data-noread="{{chat.noRead}}" bindtap='goChat' />
+                  </view>
+                  <view class="clear" style='clear: both;'></view>
+                </view>
+                <!-- 如果这条评论没有已读评论，那么会展示在未读评论区唯一的可能就是评论本身未读，那么现实评论本身内容即可 -->
+                <view class='content' wx:if="{{chat.lastChat==null && chat.isImage==0}}">{{chat.chatContent}}</view>
+                <view class='content' wx:if="{{chat.lastChat==null && chat.isImage==1}}">[图片]</view>
+                <!-- 否则一定有未读评论，那么显示最后一条未读评论的内容即可 -->
+                 <view class='content' wx:if="{{chat.lastChat!=null && chat.lastChat.isImage==0}}">{{chat.lastChat.chatContent}}</view>
+                 <view class='content' wx:if="{{chat.lastChat!=null && chat.lastChat.isImage==1}}">[图片]</view>
+              </view>
+            </view>
+            <view class="clear" style='clear: both;'></view>
+          </view>
+          
+
+        </scroll-view>
+      </swiper-item>
+
+
+    </swiper>
+  </view>
+
+  <form bindsubmit="replyCommentHandler">
+    <view class="release" hidden="{{!releaseFocus}}">
+
+      <textarea class="text" name='content' value='{{content}}' placeholder-class="input_null" fixed="true" maxlength="-1" show-confirm-bar="false" cursor-spacing="15" auto-height="true" focus="{{releaseFocus}}" placeholder="回复@ {{releaseName}}"></textarea>
+      <button class="submit" formType="submit">发送</button>
+    </view>
+  </form>
+
+
+
+</view>
+
+<!--弹窗开始-->
+<view class="modal-mask" bindtap="hideModal" catchtouchmove="preventTouchMove" wx:if="{{showModal}}"></view>
+<view class="modal-dialog" wx:if="{{showModal}}">
+  <view class="modal-title">您确认要删除吗</view>
+  <view class="modal-footer">
+    <view class="btn-cancel" bindtap="onCancel" data-status="cancel">再想想</view>
+    <view class="btn-confirm" bindtap="onConfirm" data-status="confirm">是</view>
+  </view>
+</view>
+<!-- 弹窗结束 -->

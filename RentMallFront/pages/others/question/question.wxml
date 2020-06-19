@@ -1,0 +1,28 @@
+<!--pages/others/question/question.wxml-->
+<view class="IndexList">
+
+  <view bindtap="getAnswer" data-status="1">
+    <text class="map">租赁发布机制</text>
+  </view>
+  <view bindtap="getAnswer" data-status="2">
+    <text class="map">积分规则</text>
+  </view>
+  <view bindtap="getAnswer" data-status="3">
+    <text class="map">收发货机制</text>
+  </view>
+  <view bindtap="getAnswer" data-status="4">
+    <text class="map">租赁时间计算规则</text>
+  </view>
+  <view bindtap="getAnswer" data-status="5">
+    <text class="map">押金抵押机制</text>
+  </view>
+  <view bindtap="getAnswer" data-status="6">
+    <text class="map">账号封锁机制</text>
+  </view>
+  <view bindtap="getAnswer" data-status="7">
+    <text class="map">订单查询规则</text>
+  </view>
+  <view bindtap="getAnswer" data-status="8">
+    <text class="map">联系我们</text>
+  </view>
+</view>

@@ -1,0 +1,59 @@
+<scroll-view>
+<view class="wraper">
+	<!-- 收货地址 --> 
+	<view class="address">
+    <image src="/images/address.png"  mode="scaleToFill"></image>
+		<view>
+    <text class='iconfont icon-dizhi'></text>
+			<text class="name">收货人：{{consigneeName}}</text><text class="number">{{consigneePhone}}</text>
+		</view>
+      <image src="/images/address.png"  mode="scaleToFill"></image>
+	</view>
+	<!-- 商品订单详情 -->
+	<view class="productDetails">
+		<view class="orderListTitle">
+			<view class="userImg"><image src="{{userInfo.avatarUrl}}"></image></view>
+			<text class="userName">{{userInfo.nickName}}</text>
+		</view>
+    <!-- 进行循环 -->
+		<view class="orderListDetails" wx:for="{{mylist}}">
+			<view class="productImg">
+				<image src="{{item.image1}}" mode="aspectFit"></image> <!-- 这里存放商品的图片 -->
+			</view>
+			<view class="productInfo">
+				<view class="productTitle">{{item.goodName}}</view>
+				<text class="productPrice">￥{{item.price}}</text>
+				<text class="productQuantity">x{{acountlist[index]}}</text>
+        <text class="productQuantity" wx:if="{{item.unit==0}}" decode="{{true}}">租用{{item.timeLen}}天&nbsp;&nbsp;&nbsp;</text>
+        <text class="productQuantity" wx:if="{{item.unit==1}}" decode="{{true}}">租用{{item.timeLen}}月&nbsp;&nbsp;&nbsp;</text>
+			</view>
+		</view>
+		<view class="productCount">
+			<view>共计{{mylist.length}}件商品 合计：￥<text>{{totalmoney}}</text></view>
+		</view>
+		<view class="productCount">
+			<text class="expenses">押金</text><text class="noExpenses">{{totalDeposit}}</text>
+		</view>
+	</view>	
+
+  <view class="peisong-way">
+        <view class="row-box">
+	            <view class="row-label">备注</view>
+	            <view class="right-text">
+	                <input name="remark" type="text" class="liuyan" bindinput="remarksInput" placeholder="如需备注请输入" />
+	            </view>
+	        </view>
+  </view>
+
+	<!-- 提交订单 -->
+	<view class="submitOrder">
+		<view bindtap="topay" class="submit">
+			<button class="submitBtn">提交订单</button>
+		</view>
+		<view class="account">
+			<view class="count">总计: <text class="price">￥{{totalmoney+totalDeposit}}</text></view>
+			<text>押金：{{totalDeposit}}</text>
+		</view>
+	</view>
+</view>
+</scroll-view>

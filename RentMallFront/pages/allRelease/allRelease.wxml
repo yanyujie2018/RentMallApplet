@@ -1,0 +1,41 @@
+<!--pages/allRelease/allRelease.wxml-->
+
+
+
+<view>
+  <view class='order-list-container' bindscrolltolower="onReachBottom">
+        <view class='order-item'>
+              <block wx:for="{{itemList}}" wx:for-item="item" wx:key="*this" >
+                <view class='my-order_con' catchtap='_goGoodsDetails' data-orderId="{{item.goodId}}" data-customerId="{{item.userId}}">
+                  <view>
+                    <image src='http://192.168.56.1:8080/RentMall/uploads/1584604900876wx462342c6fb47c998.o6zAJsxwpypMt0KTzscpRPWCngmg.ipsKuPvaOjOXb01f802aebfd128478658cdf0277f353.png'></image>
+                   </view>
+                  <view class='goods_title' bindtap="goDetail">
+                    <view class='title_con'>
+                      <text>{{item.goodName}}</text>
+                    </view>
+                    <view class='price_num' wx:if="{{item.unit==0}}">
+                      <text>￥{{item.price}}元/天</text>
+                      <text style='color: #999;'>{{item.releaseDate}}发布</text>
+                    </view>
+                    <view class='price_num' wx:if="{{item.unit==1}}">
+                      <text>￥{{item.price}}元/月</text>
+                      <text style='color: #999;'>{{item.releaseDate}}发布</text>
+                    </view>
+                  </view>
+                </view>
+                <view class='item-info-4' wx:if="{{item.state==0}}">
+                  <view class=' operation'>
+                    <view class=' payment' catchtap='_deleteOrder' data-goodId='{{item.goodId}}'>删除</view>
+                  </view>
+                </view>
+              </block>
+          <view class='separator3'></view>
+          <view class='item-info-3'>
+            <view>
+              <text>共{{itemList.length}}件商品</text>
+            </view>
+          </view>
+        </view>
+  </view>
+</view>

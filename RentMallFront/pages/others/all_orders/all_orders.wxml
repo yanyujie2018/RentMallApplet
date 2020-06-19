@@ -1,0 +1,367 @@
+<!--pages/others/all_orders/all_orders.wxml-->
+
+<view class="navbar">
+	<text wx:for="{{navbar}}" data-idx="{{index}}" class="item {{currentTab==index ? 'active' : ''}}" wx:key="unique" bindtap="navbarTap">{{item}}</text>
+</view> 
+<!-- 已完成模块开始 -->
+<view  class='ywc' wx:if="{{currentTab==0}}"> 
+
+
+<view class='dfk' wx:if="{{finish1.length==0 && finish2.length==0}}"> 
+<image class='center_pic' src='../../../images/nothing.jpg'></image>
+{{text}}
+<button class='center_btn' bindtap='gotoshop'>去逛逛</button>
+</view>
+
+<view wx:else>
+<!-- 已完成1 -->
+<view wx:for="{{finish1}}" wx:key="{{item.goodId}}">  
+<!-- 用商品的goodid返回详细页面 -->
+<view bindtap="toOrderDetail" class="orderDetails" data-index='{{index}}' data-status="5" data-orderid='{{item.id}}'>
+	<view class="orderListTitle"> 
+		<view class="userImg"><image src="{{infoimage}}"></image></view>
+		<text class="userName">{{userName}}</text>
+		<text class="orderStatus" wx:if="{{item.rentState==4 || item.rentState==6}}">交易成功</text>
+    <text class="orderStatus" wx:if="{{item.rentState==8 || item.rentState==5}}">交易成功(对方未归还)</text>
+	</view>
+	<view class="orderListDetails">
+		<view class="productImg">
+			<image src="{{item.image1}}" mode="aspectFit"></image> <!-- 这里放商品图片的url -->
+		</view>
+		<view class="productInfo">
+			<view class="productTitle">{{item.goodName}}</view>
+			<text class="productPrice">￥{{item.price}}</text>
+			<text class="productQuantity">x{{item.rentNum}}</text>
+		</view>
+	</view>
+
+  <view class='item-info-4'>
+    <view class=' operation'>
+      <view class=' payment' catchtap='goConsult2' data-goodid='{{item.goodId}}' data-id="{{item.id}}" data-releaseid="{{item.releaseId}}" data-rentstate="{{item.rentState}}" wx:if="{{item.rentState==8 || item.rentState==5}}">协商</view>
+    </view>
+  </view>
+
+	<view class="productCount">
+		<view>合计：￥<text>{{item.rentNum*item.price}}</text></view>
+    <!-- 合计：数量乘以单价 -->
+	</view>
+</view>	
+</view>
+
+<!-- 已完成2 -->
+<view wx:for="{{finish2}}" wx:key="{{item.goodId}}">  
+<!-- 用商品的bookid返回详细页面 -->
+<view bindtap="toOrderDetail" class="orderDetails" data-index='{{index}}' data-status="5" data-orderid='{{item.id}}'>
+	<view class="orderListTitle"> 
+		<view class="userImg"><image src="{{infoimage}}"></image></view>
+		<text class="userName">{{userName}}</text>
+		<text class="orderStatus" wx:if="{{item.rentState==4 || item.rentState==6}}">交易成功</text>
+    <text class="orderStatus" wx:if="{{item.rentState==5 || item.rentState==8}}">交易成功(押金扣留)</text>
+	</view>
+	<view class="orderListDetails">
+		<view class="productImg">
+			<image src="{{item.image1}}" mode="aspectFit"></image> <!-- 这里放商品图片的url -->
+		</view>
+		<view class="productInfo">
+			<view class="productTitle">{{item.goodName}}</view>
+			<text class="productPrice">￥{{item.price}}</text>
+			<text class="productQuantity">x{{item.rentNum}}</text>
+		</view>
+	</view>
+
+  <view>
+  <view class='item-info-4'>
+    <view class=' operation'>
+      <view class=' payment' catchtap='goRemark' data-goodid='{{item.goodId}}' data-id="{{item.id}}" data-releaseid="{{item.releaseId}}" data-rentstate="{{item.rentState}}" wx:if="{{item.rentState==4 || item.rentState==5}}">评论</view>
+      <view class=' payment' catchtap='goConsult' data-goodid='{{item.goodId}}' data-id="{{item.id}}" data-releaseid="{{item.releaseId}}" data-rentstate="{{item.rentState}}" wx:if="{{item.rentState==8 || item.rentState==5}}">协商</view>
+    </view>
+  </view>
+	<view class="productCount">
+		<view>合计：￥<text>{{item.rentNum*item.price}}</text></view>
+    <!-- 合计：数量乘以单价 -->
+	</view>
+  </view>
+
+</view>	
+</view>
+
+</view>
+</view>
+<!-- 已完成模块结束 -->
+
+<!-- 租用中模块开始 -->
+<view  class='ywc' wx:if="{{currentTab==1}}"> 
+<view class='dfk' wx:if="{{waitPay.length==0}}"> <!-- 看租用中的里面是否有信息 -->
+<image class='center_pic' src='../../../images/nothing.jpg'></image>
+{{text}}
+<button class='center_btn' bindtap='gotoshop'>去逛逛</button>
+</view>
+
+<view wx:else>
+<view wx:for="{{waitPay}}" wx:key="{{item.goodId}}">  
+<!-- 用商品的goodid返回详细页面 -->
+<view bindtap="toOrderDetail" class="orderDetails" data-index='{{index}}' data-status="4" data-orderid='{{item.id}}'>
+	<view class="orderListTitle"> 
+		<view class="userImg"><image src="{{infoimage}}"></image></view>
+		<text class="userName">{{userName}}</text>
+		<text class="orderStatus" wx:if="{{item.rentId==openid}}">租用中</text>
+    <text class="orderStatus" wx:if="{{item.releaseId==openid}}">出租中</text>
+	</view>
+	<view class="orderListDetails">
+		<view class="productImg">
+		  <image src="{{item.image1}}" mode="aspectFit"></image> <!-- 这里放商品图片的url -->
+		</view>
+		<view class="productInfo">
+					<view class="productTitle">{{item.goodName}}</view>
+			<text class="productPrice">￥{{item.price}}</text>
+			<text class="productQuantity">x{{item.rentNum}}</text>
+		</view>
+	</view>
+
+  <view class="productCount">
+    <view class="tips" wx:if="{{item.rentId==openid && item.idState==1}}">该物主已被封，请谨慎归还！</view>
+		<view class="total">合计：￥<text>{{item.rentNum*item.price}}</text></view>
+    <!-- 合计：数量乘以单价 -->
+	</view>
+</view>	
+</view>
+</view>
+</view>
+<!-- 租用中模块结束 -->
+
+<!-- 待发货模块开始 -->
+<view  class='ywc' wx:if="{{currentTab==2}}"> 
+
+<view class='dfk' wx:if="{{waitSend.length==0}}"> 
+<image class='center_pic' src='../../../images/nothing.jpg'></image>
+{{text}}
+<button class='center_btn' bindtap='gotoshop'>去逛逛</button>
+</view>
+
+<view wx:else>
+<view wx:for="{{waitSend}}" wx:key="{{item.goodId}}">  
+<!-- 用商品的goodId返回详细页面 -->
+<view bindtap="toOrderDetail" class="orderDetails" data-index='{{index}}' data-rentlen='{{item.rentLen}}' data-unit='{{item.unit}}' data-status="1" data-orderid='{{item.id}}'>
+	<view class="orderListTitle"> 
+		<view class="userImg"><image src="{{infoimage}}"></image></view>  <!-- 显示用户的头像 -->
+		<text class="userName">{{userName}}</text> <!-- 显示用户的昵称 -->
+		<text class="orderStatus">待发货</text>
+	</view>
+	<view class="orderListDetails">
+		<view class="productImg">
+			<image src="{{item.image1}}" mode="aspectFit"></image> <!-- 这里放商品图片的url -->
+		</view>
+		<view class="productInfo">
+					<view class="productTitle">{{item.goodName}}</view>
+			<text class="productPrice">￥{{item.price}}</text>
+			<text class="productQuantity">x{{item.rentNum}}</text>
+		</view>
+	</view>
+	<view>
+  <view class='item-info-4'>
+    <view class=' operation'>
+      <view class=' payment' catchtap='goSend' data-goodid='{{item.goodId}}' data-rentlen='{{item.rentLen}}' data-unit='{{item.unit}}' data-id='{{item.id}}'>点击发货</view>
+    </view>
+  </view>
+	<view class="productCount">
+		<view>合计：￥<text>{{item.rentNum*item.price}}</text></view>
+    <!-- 合计：数量乘以单价 -->
+	</view>
+  </view>
+</view>	
+</view>
+</view>
+</view>
+<!-- 待发货模块结束 -->
+
+
+<!-- 待收货模块开始 -->
+<view  class='ywc' wx:if="{{currentTab==3}}"> 
+
+
+<view class='dfk' wx:if="{{waitReceive.length==0}}"> 
+<image class='center_pic' src='../../../images/nothing.jpg'></image>
+{{text}}
+<button class='center_btn' bindtap='gotoshop'>去逛逛</button>
+</view>
+
+<view wx:else>
+<view wx:for="{{waitReceive}}" wx:key="{{item.goodId}}">  
+<!-- 用商品的goodid返回详细页面 -->
+<view bindtap="toOrderDetail" class="orderDetails" data-index='{{index}}' data-status="2" data-orderid='{{item.id}}'>
+	<view class="orderListTitle"> 
+		<view class="userImg"><image src="{{infoimage}}"></image></view>
+		<text class="userName">{{userName}}</text>
+		<text class="orderStatus" wx:if="{{item.rentState==1}}">待收货</text>
+    <text class="orderStatus" wx:if="{{item.rentState==0}}">发货中</text>
+	</view>
+	<view class="orderListDetails">
+		<view class="productImg">
+			<image src="{{item.image1}}" mode="aspectFit"></image> <!-- 这里放商品图片的url -->
+		</view>
+		<view class="productInfo">
+				<view class="productTitle">{{item.goodName}}</view>
+			<text class="productPrice">￥{{item.price}}</text>
+			<text class="productQuantity">x{{item.rentNum}}</text>
+		</view>
+	</view>
+	<view>
+  <view class='item-info-4'>
+    <view class=' operation'>
+      <view class=' payment' catchtap='goReceive' data-id='{{item.id}}'  wx:if="{{item.rentState==1}}">点击收货</view>
+      <!-- 发布者账号正常，且当前商品还未发货，可以催促发货 -->
+       <view class=' payment' catchtap='goUrgeDelivery' data-id='{{item.id}}'  wx:if="{{item.rentState==0 && item.idState==0}}">催促发货</view>
+    </view>
+  </view>
+	<view class="productCount">
+    <view class="tips" wx:if="{{item.rentState==0 && item.idState==1}}" style="font-size:28rpx;">该物主已被封，将不再发货！</view>
+    <view class="tips" wx:if="{{item.rentState==1 && item.idState==1}}" style="font-size:28rpx;">该物主已被封，请谨慎归还！</view>
+		<view class="total">合计：￥<text>{{item.rentNum*item.price}}</text></view>
+    <!-- 合计：数量乘以单价 -->
+	</view>
+  </view>
+</view>	
+</view>
+</view>
+</view>
+<!-- 待收货模块结束 -->
+
+
+<!-- 待归还模块开始 -->
+<view  class='ywc' wx:if="{{currentTab==4}}"> 
+
+
+<view class='dfk' wx:if="{{waitReturn.length==0}}"> 
+<image class='center_pic' src='../../../images/nothing.jpg'></image>
+{{text}}
+<button class='center_btn' bindtap='gotoshop'>去逛逛</button>
+</view>
+
+<view wx:else>
+<view wx:for="{{waitReturn}}" wx:key="{{item.goodId}}">  
+<!-- 用商品的goodid返回详细页面 -->
+<view bindtap="toOrderDetail" class="orderDetails" data-index='{{index}}' data-status="3" data-orderid='{{item.id}}'>
+	<view class="orderListTitle"> 
+		<view class="userImg"><image src="{{infoimage}}"></image></view>
+		<text class="userName">{{userName}}</text>
+		<text class="orderStatus" wx:if="{{openid==item.rentId && item.rest==0}}">即将到期！</text>
+    <text class="orderStatus" wx:if="{{openid==item.rentId && item.rest>0}}">请与{{item.rest}}日内归还!</text>
+    <text class="orderStatus" wx:if="{{openid==item.releaseId}}">等待归还</text>
+	</view>
+	<view class="orderListDetails">
+		<view class="productImg">
+		  <image src="{{item.image1}}" mode="aspectFit"></image> <!-- 这里放商品图片的url -->
+		</view>
+		<view class="productInfo">
+				<view class="productTitle">{{item.goodName}}</view>
+			<text class="productPrice">￥{{item.price}}</text>
+			<text class="productQuantity">x{{item.rentNum}}</text>
+		</view>
+	</view>
+	<view>
+  <view class='item-info-4'>
+    <view class=' operation'>
+    <view class=' payment' catchtap='goReturn' data-id='{{item.id}}' wx:if="{{openid==item.rentId}}">点击归还</view>
+      <view class=' payment' catchtap='goReturn2' data-id='{{item.id}}' wx:if="{{openid==item.releaseId}}">催促归还</view>
+    </view>
+  </view>
+	<view class="productCount">
+    <view class="tips" wx:if="{{item.idState==1}}" style="font-size:28rpx;">该物主已被封，请谨慎归还！</view>
+		<view class="total">合计：￥<text>{{item.rentNum*item.price}}</text></view>
+    <!-- 合计：数量乘以单价 -->
+	</view>
+  </view>
+</view>	
+</view>
+</view>
+</view>
+<!-- 待归还模块结束 -->
+
+
+
+<!-- 待收回模块开始 -->
+<view  class='ywc' wx:if="{{currentTab==5}}"> 
+
+
+<view class='dfk' wx:if="{{waitRecovery.length==0}}"> 
+<image class='center_pic' src='../../../images/nothing.jpg'></image>
+{{text}}
+<button class='center_btn' bindtap='gotoshop'>去逛逛</button>
+</view>
+
+<view wx:else>
+<view wx:for="{{waitRecovery}}" wx:key="{{item.goodId}}">  
+<!-- 用商品的goodid返回详细页面 -->
+<view bindtap="toOrderDetail" class="orderDetails" data-index='{{index}}' data-status="6" data-orderid='{{item.id}}'>
+	<view class="orderListTitle"> 
+		<view class="userImg"><image src="{{infoimage}}"></image></view>
+		<text class="userName">{{userName}}</text>
+		<text class="orderStatus">待收回</text>
+	</view>
+	<view class="orderListDetails">
+		<view class="productImg">
+			<image src="{{item.image1}}" mode="aspectFit"></image> <!-- 这里放商品图片的url -->
+		</view>
+		<view class="productInfo">
+				<view class="productTitle">{{item.goodName}}</view>
+			<text class="productPrice">￥{{item.price}}</text>
+			<text class="productQuantity">x{{item.rentNum}}</text>
+		</view>
+	</view>
+	<view>
+  <view class='item-info-4'>
+    <view class=' operation'>
+      <view class=' payment' catchtap='goRecovery' data-rentnum='{{item.rentNum}}' data-goodid='{{item.goodId}}' data-id='{{item.id}}' wx:if="{{item.rentState==7}}">点击收回</view>
+      <view class=' payment' catchtap='goUrge' data-rentnum='{{item.rentNum}}' data-goodid='{{item.goodId}}' data-id='{{item.id}}' wx:if="{{item.rentState==3}}">催促归还</view>
+    </view>
+  </view>
+	<view class="productCount">
+		<view>合计：￥<text>{{item.rentNum*item.price}}</text></view>
+    <!-- 合计：数量乘以单价 -->
+	</view>
+  </view>
+</view>	
+</view>
+</view>
+</view>
+<!-- 待收回模块结束 -->
+
+
+<!-- 退款中模块开始 -->
+<view  class='ywc' wx:if="{{currentTab==4}}"> 
+
+
+<view class='dfk' wx:if="{{tuikuanzhong.length==0}}"> 
+<image class='center_pic' src='../../../images/nothing.jpg' ></image>
+{{text}}
+<button class='center_btn' bindtap='gotoshop'>去逛逛</button>
+</view>
+
+<view wx:else>
+<view wx:for="{{tuikuanzhong}}" wx:key="{{item.bookid}}">  
+<!-- 用商品的bookid返回详细页面 -->
+<view bindtap="toOrderDetail" class="orderDetails" data-index='{{index}}' data-status="0" data-orderid='{{item.id}}'>
+	<view class="orderListTitle"> 
+		<view class="userImg"><image src="{{infoimage}}"></image></view>
+		<text class="userName">{{userName}}</text>
+		<text class="orderStatus">待退款</text>
+	</view>
+	<view class="orderListDetails">
+		<view class="productImg">
+			<image src="{{item.image1}}" mode="aspectFit"></image> <!-- 这里放商品图片的url -->
+		</view>
+		<view class="productInfo">
+					<view class="productTitle">{{tuikuanzhong_mes[index].bookname}}</view>
+			<text class="productPrice">￥{{tuikuanzhong_mes[index].discountprice}}</text>
+			<text class="productQuantity">x{{item.amount}}</text>
+		</view>
+	</view>
+	<view class="productCount">
+		<view>合计：￥<text>{{item.amount*tuikuanzhong_mes[index].discountprice}}</text></view>
+    <!-- 合计：数量乘以单价 -->
+	</view>
+</view>	
+</view>
+</view>
+</view>
+<!-- 退款中模块结束 -->

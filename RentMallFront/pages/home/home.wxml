@@ -1,0 +1,55 @@
+<!--pages/home/home.wxml-->
+<view>  
+  <view id="" class="goods" >
+    <!-- 用户信息 -->
+    <view class='user' data-userId="{{user.userId}}">
+      <view class='user-image-info'>
+        <image class="user-image" src="{{user.avatarUrl}}" />
+      </view>
+      
+      <view class='user-info'>
+        <view class='user-name-tr'>
+          <view class='user-name' wx:if="{{user.userName==null || user.userName==''}}">{{user.nickName}}</view>
+          <view class='user-name' wx:if="{{user.userName!=null && user.userName!=''}}">{{user.userName}}</view>
+          <button wx:if="{{isFollow}}" type="primary" size="mini" style="float:right" data-follow="1" bindtap="changeFollow" data-userid="{{user.userId}}" data-follow="{{isFollow}}">取消关注</button>            
+          <button wx:if="{{!isFollow}}" type="primary" size="mini" style="float:right" data-userid="{{user.userId}}" data-follow="0" bindtap="changeFollow" data-follow="{{isFollow}}">关注</button>
+          </view>
+        </view>
+        <view class='pingjia'>好评率: {{goodRate}}%</view>
+
+      </view>
+      <view class="clear" style='clear: both;'></view>
+      <scroll-view scroll-y class='scroll-view' bindscrolltoupper="upper" bindscrolltolower="lower" bindscroll="scroll" scroll-into-view="{{toView}}" scroll-top="{{scrollTop}}">
+      <!-- 商品展示 -->
+      <view wx:for="{{goodsList}}" wx:for-item="goods" wx:key="index">
+        <view id="" class="goods" data-goodid="{{goods.goodId}}" bindtap="goodsDetails"> 
+          <view class='user-name-tr'>     
+            <!-- 物品名称以及详细描述信息展示 -->
+            <view style='font-weight:bold;float:left'>{{goods.goodName}}</view> 
+            <!-- 商品价格 -->
+            <view class="price">￥{{goods.price}}</view>           
+          </view> 
+          <span class="sold" wx:if="{{goods.num==0}}" style="float:right">缺货中</span>             
+                                                  
+          <!-- 物品图片展示 -->
+           <view class='images-list'>
+            <view class='showPic' style='background:white'>
+            <image mode='aspectFill' class='image' wx:if="{{goods.image1!=null && goods.image1!=''}}" src="{{goods.image1}}" ></image>
+            <image mode='aspectFill' class='image' wx:if="{{goods.image2!=null && goods.image2!=''}}" src="{{goods.image2}}" ></image>
+             <image mode='aspectFill' class='image' wx:if="{{goods.image3!=null && goods.image3!=''}}" src="{{goods.image3}}" ></image>
+            </view>
+            <view class="clear" style='clear: both;'></view>
+          </view>
+          <view class="clear" style='clear: both;'></view>         
+          <view>
+            <!-- 物品发布时间 -->
+            <view class='timestamp'>发布于{{goods.releaseDate}}</view>
+            <!-- 浏览次数 -->
+            <view class='viewTimes'>浏览{{goods.views}}次</view> 
+          </view>
+          
+        </view>
+      </view>
+      </scroll-view>
+    </view> 
+</view>

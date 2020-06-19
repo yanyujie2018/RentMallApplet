@@ -1,0 +1,102 @@
+<view class='container'>
+<!-- 头像区区域开始 -->
+  <view class="userinfo"> 
+  <text catchtap="goSetting" class="setting">
+    设置
+  </text>
+  <!-- 微信官方进行修改之后，wx.getUserInfo（）便不再出现授权弹窗了，需要使用button做引导，即在button中需要使用open-type="getUserInfo"引导用户授权 -->
+  <!-- hasUserInfo是判断当前是否获取用户信息，canIUse是判断当前版本是否支持open-type="getUserInfo" -->
+    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="onGotUserInfo"> 获取头像昵称 </button>
+    <block wx:else>
+      <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
+      <text class="userinfo-nickname" wx:if="{{userName==null || userName==''}}">{{userInfo.nickName}}</text>
+      <text class="userinfo-nickname" wx:if="{{userName!=null && userName!=''}}">{{userName}}</text>
+      <text class="userinfo-nickname" wx:if="{{score>=0}}">信用：{{score}}</text>
+      <text class="userinfo-nickname" wx:if="{{score<0}}" style="color:red;">您的账号已被封锁，请联系客服解封！</text>
+    </block>
+  </view>
+<!-- 头像区域结束 --> 
+<!-- 列表一开始 -->
+  <view class='orders_list'>
+  <view class='block'></view>
+    <view class='all_orders' bindtap='all_orders'>
+      <text class='iconfont icon-quanbudingdan' decode="{{true}}">&nbsp;&nbsp;</text>
+      <text class='text'>全部订单</text>
+      <view class='right'><text class='iconfont icon-youjiantou'></text></view>
+    </view>
+    
+    <view class="divLine"></view>
+    <view class='waitpay_list' bindtap='waitpay_list'>
+      <text class='iconfont icon-daifukuan' decode="{{true}}">&nbsp;&nbsp;</text>
+      <text  class='text'>租用中</text>
+      <view class='right'><text class='iconfont icon-youjiantou'></text></view>
+    </view>
+
+    <view class="divLine"></view>
+    <view class='waitsend_list' bindtap='waitsend_list'>
+      <text class='iconfont icon-daifahuo' decode="{{true}}">&nbsp;&nbsp;</text>
+      <text class='text'>待发货</text>
+      <view class='right'><text class='iconfont icon-youjiantou'></text></view>
+    </view>
+
+    <view class="divLine"></view>
+    <view class='waitsend_list' bindtap='waitReceive_list'>
+      <text class='iconfont icon-daifahuo' decode="{{true}}">&nbsp;&nbsp;</text>
+      <text class='text'>待收货</text>
+      <view class='right'><text class='iconfont icon-youjiantou'></text></view>
+    </view> 
+
+    <view class="divLine"></view>
+    <view class='waitsend_list' bindtap='waitreturn_list'>
+      <text class='iconfont icon-daifahuo' decode="{{true}}">&nbsp;&nbsp;</text>
+      <text class='text'>待归还</text>
+      <view class='right'><text class='iconfont icon-youjiantou'></text></view>
+    </view> 
+
+    <view class="divLine"></view>
+    <view class='waitreceiv_list' bindtap='waitRecovery_list'> 
+      <text class='iconfont icon-tuikuan' decode="{{true}}">&nbsp;&nbsp;</text>
+      <text class='text'>待收回</text>
+      <view class='right'><text class='iconfont icon-youjiantou'></text></view>
+    </view>
+
+
+    <view class="divLine"></view>
+    <view class='waitback_list' bindtap='Release' data-score="{{score}}"> 
+      <text class='iconfont icon-daishouhuo' decode="{{true}}">&nbsp;&nbsp;</text>
+      <text class='text'>发布</text>
+      <view class='right'><text class='iconfont icon-youjiantou'></text></view>
+    </view>
+     <view class='among'></view>
+  </view>
+<!-- 列表一结束 -->
+<!-- 列表二开始 -->
+<view class='otherscontainer'>
+<view class='mycollections' bindtap='selfRelease'>
+      <text class='iconfont icon-shoucang' decode="{{true}}">&nbsp;&nbsp;</text>  
+      <text class='text'>我的发布</text>  <!-- 是用户租给其他人的所有订单，包括未出租，未归还，正在租用，和已归还的 -->
+      <view class='right'><text class='iconfont icon-youjiantou'></text></view>
+  </view>
+  <view class="divLine"></view>
+  <view class='mycollections' bindtap='mycollections'>
+      <text class='iconfont icon-shoucang' decode="{{true}}">&nbsp;&nbsp;</text>  
+      <text class='text'>我的收藏</text>
+      <view class='right'><text class='iconfont icon-youjiantou'></text></view>
+  </view>
+  <view class="divLine"></view>
+  <view class='mycards' bindtap='myFollow'>
+      <text class='iconfont icon-kaquan' decode="{{true}}">&nbsp;&nbsp;</text>  
+      <text class='text'>我的关注</text>
+      <view class='right'><text class='iconfont icon-youjiantou'></text></view>
+  </view>
+  <view class="divLine"></view>
+    <view class='myoptions' bindtap='question'>
+      <text class='iconfont icon-yijianfankui' decode="{{true}}">&nbsp;&nbsp;</text>  
+      <text class='text'>疑难解答</text>
+      <view class='right'><text class='iconfont icon-youjiantou'></text></view>
+  </view>
+   <view class='among'></view>
+</view>
+ <view class='bottom'></view>
+<!-- 列表二结束 -->
+</view>

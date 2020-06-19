@@ -1,0 +1,26 @@
+/* pages/others/question/question.wxss */
+/* pages/home/home.wxss */
+.IndexHome{
+  width: 100%;
+  display: block;
+  background-color: #010101;
+  height: 500rpx;
+  overflow: hidden;
+  text-align: center
+}
+.IndexList{
+  width: 100%;
+  display: block;
+  margin-top: 40rpx;
+}
+.IndexList view{
+    border-bottom: 1px solid #F5F5F5;
+    width: 100%;
+    display:  block;
+    margin: 0 8%;
+    color: #333;
+    height: 100rpx;
+    line-height: 100rpx;
+    font-size: 30rpx;
+}
+

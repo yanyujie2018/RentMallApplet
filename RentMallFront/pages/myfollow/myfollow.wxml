@@ -1,0 +1,22 @@
+<!--pages/myfollow/myfollow.wxml-->
+<scroll-view scroll-y  bindscrolltoupper="upper" bindscrolltolower="lower" bindscroll="scroll" scroll-into-view="{{toView}}" scroll-top="{{scrollTop}}">
+<view wx:for="{{followList}}" wx:for-item="item" wx:key="index">
+    <view class='user' data-userId="{{item.user.userId}}" data-avat="{{item.user.avatarUrl}}" bindtap="toHome">
+      <view class='user-image-info'>
+        <image class="user-image" src="{{item.user.avatarUrl}}" />
+      </view>
+      
+      <view class='user-info'>
+        <view class='user-name-tr'>
+          <view class='user-name' wx:if="{{item.user.userName==null || item.user.userName==''}}">{{item.user.nickName}}</view>
+          <view class='user-name' wx:if="{{item.user.userName!=null && item.user.userName!=''}}">{{item.user.userName}}</view>
+          <!-- bindtap：如果实在多层嵌套的情况下同时使用bindtap方式它会造成冒泡异常 所以会导致在触发子元素事件时，父元素事件也会触发，把bindtap改成catchtap即可 -->
+          <button type="primary" size="mini" style="float:right" data-follow="1" catchtap="changeFollow" data-followid="{{item.followId}}"  data-followtoid="{{item.followToId}}">取消关注</button>  
+          </view>
+        </view>
+        <view class='pingjia' wx:if="{{item.user.school!=null && item.user.school!=''}}">学校：{{item.user.school}}</view>
+        <view class='pingjia' wx:else>学校：未知</view>
+
+      </view>
+    </view>
+  </scroll-view>

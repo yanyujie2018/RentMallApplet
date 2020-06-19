@@ -1,0 +1,44 @@
+<!--pages/others/mycollections/mycollections.wxml-->
+<view class='mycollection' hidden="{{iscollections}}">
+<image class='center_pic' src='../../../images/nothing.jpg'></image>
+你还没有收藏哦^_^
+<button class='center_btn' bindtap='gotoshop'>去逛逛</button>
+</view>
+  
+<view class='mycollections' hidden="{{!iscollections}}">
+    <view class="orderListDetails" wx:for="{{collectList}}" wx:key="{{item.collectGoodId}}">  
+      <view class='item' bindtap='gotodetail' data-goodid="{{item.collectGoodId}}">
+      <view class="productImg">
+        <image class='image' src="{{item.image1}}" mode='aspectFit'></image> <!-- 这里放商品的图片 -->
+      </view>
+      <view class="productInfo">
+        <view class="productTitle">{{item.goodName}}</view>
+        <view class='priceitem'>
+          <view class='price'>
+            <text class="productPrice">￥{{item.price}}</text>
+            <text class="productOldPrice">押金￥{{item.deposit}}</text>
+          </view>
+          <view class='garbage'>
+            <image class="garbage_img" data-index='{{index}}' src="/images/garbage.png" catchtap='showModal' data-id="{{item.id}}"></image>
+          </view>
+        </view>
+         <view class='status'>
+            <text wx:if="{{item.num<=0}}">暂不可租</text>
+            <text wx:if="{{item.num>0}}">现在有货</text>
+         </view>
+      </view>
+      </view>
+      <view class='space'></view>
+  </view>
+</view>
+
+<!--弹窗开始-->
+<view class="modal-mask" bindtap="hideModal" catchtouchmove="preventTouchMove" wx:if="{{showModal}}"></view>
+<view class="modal-dialog" wx:if="{{showModal}}">
+  <view class="modal-title">您确认要删除吗</view>
+  <view class="modal-footer">
+    <view class="btn-cancel" bindtap="onCancel" data-status="cancel">再想想</view>
+    <view class="btn-confirm" bindtap="onConfirm" data-status="confirm">是</view>
+  </view>
+</view>
+<!-- 弹窗结束 -->
