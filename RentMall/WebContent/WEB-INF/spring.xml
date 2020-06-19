@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+                        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd  
+                        http://www.springframework.org/schema/context  
+                        http://www.springframework.org/schema/context/spring-context-4.2.xsd  
+                        http://www.springframework.org/schema/mvc  
+                        http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+                        http://www.springframework.org/schema/task
+                        http://www.springframework.org/schema/task/spring-task-4.2.xsd
+                        http://www.springframework.org/schema/tx 
+                        http://www.springframework.org/schema/tx/spring-tx.xsd">
+	
+	<!--spring于mybatis整和  -->
+	<!--配置数据源  -->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/mall?useUnicode=true&amp;characterEncoding=utf-8&amp;autoReconnect=true&amp;zeroDateTimeBehavior=convertToNull" />
+		<property name="username" value="root" />
+		<property name="password" value="" /> 
+		<!-- 初始化连接大小 -->
+		<property name="initialSize" value="0"></property>
+		<!-- 连接池最大数量 -->
+		<property name="maxActive" value="20"></property>
+		<!-- 连接池最大空闲 -->
+		<property name="maxIdle" value="20"></property>
+		<!-- 连接池最小空闲 -->
+		<property name="minIdle" value="1"></property>
+		<!-- 获取连接最大等待时间 -->
+		<property name="maxWait" value="60000"></property>
+		<!--空闲时是否进行验证，检查对象是否有效，默认为false  -->
+		<property name="testWhileIdle" value="true"></property>
+		<!--失效检查线程运行时间间隔，如果小于等于0，不会启动检查线程，默认-1  -->
+		<property name="timeBetweenEvictionRunsMillis" value="3600000"></property>
+		<!--大于0 ，进行连接空闲时间判断，或为0，对空闲的连接不进行验证；默认30分钟  -->
+		<property name="minEvictableIdleTimeMillis" value="1800000"></property>
+		<!--取得对象时是否进行验证，检查对象是否有效，默认为false  -->
+		<property name="testOnBorrow" value="true"></property>
+	</bean>
+	
+	<!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<!-- 自动扫描mapping.xml文件 -->
+		<property name="mapperLocations" value="classpath*:com/qd/mapper/*.xml"></property>
+	</bean>
+	<!-- DAO接口所在包名，Spring会自动查找其下的类 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.qd.dao" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+	</bean>
+	
+	 <!-- 启动包扫描功能，以便注册带有@Controller、@Service、@repository、@Component等注解的类成为spring的bean -->  
+    <context:component-scan base-package="com" />  
+    <context:component-scan base-package="com" />
+    
+     <!-- 对模型视图名称的解析，在请求时模型视图名称添加前后缀 -->  
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" 
+    		p:prefix="/" p:suffix=".jsp" />  
+    		
+    <!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>	
+	
+	<!-- 注册json需要的适配器 -->
+	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+    	<property name="messageConverters">
+    		<list>
+    			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"></bean>
+    		</list>
+    	</property>
+	</bean>
+	
+	<!-- 文件上传配置，在上传图片等时需要进行配置 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 默认编码 -->
+        <property name="defaultEncoding" value="UTF-8"/>
+        <!-- 上传文件大小限制为31M，31*1024*1024 -->
+        <property name="maxUploadSize" value="32505856"/>
+        <!-- 内存中的最大值 -->
+        <property name="maxInMemorySize" value="4096"/>
+    </bean>
+	
+	<!-- 支持  @Transactional 标记 -->  
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+    
+	
+	<mvc:annotation-driven />
+
+</beans>

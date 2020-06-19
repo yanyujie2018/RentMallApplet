@@ -1,0 +1,637 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qd.dao.operation">
+	<!-- 添加用户信息 -->
+	<insert id="addUserMsg">
+		insert into usermsg(userId,phone,score,birthday,sex,idCard,wxNum,school,userName,idState) values(#{userId},null,0,null,null,null,null,null,null,0)
+	</insert>
+	
+	<!-- 查询用户信息 -->
+	<select id="findUserMsgById" resultType="com.qd.bean.userMsg">
+		select * from usermsg where userId=#{userId}
+	</select>
+	
+	<!-- 修改用户性别 -->
+	<update id="modiyfSexById">
+		update usermsg set sex=#{sex} where userId=#{userId}
+	</update>
+	
+	<!-- 修改用户生日 -->
+	<update id="modiyfBirthById">
+		update usermsg set birthday=#{birthday} where userId=#{userId}
+	</update>
+	
+	
+	<!-- 这样子写在一起总是会莫名其妙的报错，怎么改都不对！！！，分开一个一个改就可以？？？ -->
+	<!-- 修改用户的基本信息（身份证，姓名，学校，微信号） -->
+	<!--  
+	<update id="modifyBaseById">
+		update usermsg
+		<set>
+			<if test="userName!=null and idCard==null and wxNum==null and school==null">
+				userName=#{userName}
+			</if>
+			<if test="userName==null and idCard!=null and wxNum==null and school==null">
+				idCard=#{idCard}
+			</if>
+			<if test="userName==null and idCard==null and wxNum!=null and school==null">
+				wxNum=#{wxNum}
+			</if>
+			<if test="userName==null and idCard==null and wxNum==null and school!=null">
+				school=#{school}
+			</if>
+		</set>
+		 where userId = #{userId}
+	</update>
+	-->
+	
+	
+	<!-- 分开修改基本信息 -->
+	<!-- 修改姓名 -->
+	<update id="modifyNameById">
+		update usermsg set userName=#{userName} where userId=#{userId}
+	</update>
+	
+	<!-- 修改身份证 -->
+	<update id="modifyIdCardById">
+		update usermsg set idCard=#{idCard} where userId=#{userId}
+	</update>
+	
+	<!-- 修改学校 -->
+	<update id="modifySchoolById">
+		update usermsg set school=#{school} where userId=#{userId}
+	</update>
+	
+	<!-- 修改微信号 -->
+	<update id="modifyWxNumById">
+		update usermsg set wxNum=#{wxNum} where userId=#{userId}
+	</update>
+	
+	<!-- 修改手机号 -->
+	<update id="modifyPhoneById">
+		update usermsg set phone=#{phone} where userId=#{userId}
+	</update>
+	
+	<!-- 添加商品信息（除图片外） -->
+	<insert id="addGoodMsg" parameterType="com.qd.bean.goodMsg" useGeneratedKeys="true" keyProperty="goodId" keyColumn="goodId">
+		insert into goodmsg(goodName,introduction,goodDetail,price,userId,releaseDate,views,type,state,unit,deposit,collect,deadline,num) 
+			values(#{good.goodName},#{good.introduction},#{good.goodDetail},#{good.price},#{good.userId},#{good.releaseDate},0,#{good.type},0,#{good.unit},#{good.deposit},0,#{good.deadline},#{good.num})
+	  <!-- keyColumn：插入数据以后，要返回的内容在数据表中对应的字段名称
+	  	   keyProperty：指定返回的id映射到bean中的哪个属性，这个bean对应的类的名称就是上面insert标签中的属性parameterType的值，
+	  	   order=”AFTER”：表示这个selectKey语句的执行是在insert语句之后
+	  	   resultType：selectKey语句返回值的类型，我这里是int类型
+	  	   在controller中使用传入的bean类的get函数获取；若直接使用一个int型接收结果值，则表示的是操作是否成功的0或1
+	   -->
+	   <!-- 注意：这里的keyProperty指定返回的id映射到bean中的哪个属性，所以必须要使用  bean名称.属性名，单独写一个属性名是不可以的； -->
+	  <selectKey resultType="java.lang.Integer" order="AFTER"
+             keyProperty="good.goodId" keyColumn="goodId">
+           SELECT LAST_INSERT_ID()
+      </selectKey>
+      
+	</insert>
+	
+	
+	<!-- 添加商品图片 -->
+    <update id="addGoodImage1">
+      update goodmsg set image1=#{imagePath} where goodId=#{goodId}
+    </update>
+    
+    <!-- 添加商品图片 -->
+    <update id="addGoodImage2">
+      update goodmsg set image2=#{imagePath} where goodId=#{goodId}
+    </update>
+    
+    <!-- 添加商品图片 -->
+    <update id="addGoodImage3">
+      update goodmsg set image3=#{imagePath} where goodId=#{goodId}
+    </update>
+    
+    <!-- 查询所有发布信息 -->
+    <select id="showAllRelease" resultType="com.qd.bean.goodMsg">
+    	select * from goodmsg where userId=#{userId}
+    </select>
+    
+    <!-- 删除发布信息 -->
+    <delete id="deleteGoodById">
+    	delete from goodmsg where goodId=#{goodId}
+    </delete>
+    
+    <!-- 查询租用中的订单（包括出租中和租用中） -->
+    <select id="findRent" resultType="com.qd.bean.rentMsg">
+    	select rentmsg.Id,rentmsg.goodId,rentmsg.releaseId,rentmsg.remarks,rentmsg.dueTime,rentmsg.rentDate,rentmsg.rentId,rentmsg.rentState,rentmsg.rentNum,goodmsg.goodName,goodmsg.price,goodmsg.image1,rentmsg.payDate,goodmsg.unit,rentmsg.rentLen,usermsg.idState,goodmsg.deadline  
+    	from rentmsg,goodmsg,usermsg where (rentId=#{rentId} or releaseId=#{rentId}) and rentState=#{rentState} and rentmsg.goodId=goodmsg.goodId and usermsg.userId=rentmsg.releaseId
+    </select>
+    
+    <!-- 查询待归还的订单 -->
+    <select id="findWaitReturn" resultType="com.qd.bean.rentMsg">
+    	select rentmsg.Id,rentmsg.goodId,rentmsg.releaseId,rentmsg.remarks,rentmsg.dueTime,rentmsg.rentDate,rentmsg.rentId,rentmsg.rentState,rentmsg.rentNum,goodmsg.goodName,goodmsg.price,goodmsg.image1,rentmsg.payDate,goodmsg.unit,rentmsg.rentLen,usermsg.idState,goodmsg.deadline  
+    	from rentmsg,goodmsg,usermsg where rentId=#{rentId} and rentState=#{rentState} and rentmsg.goodId=goodmsg.goodId and usermsg.userId=rentmsg.releaseId
+    </select>
+    
+    <!-- 以当前用户id为发货者id，查找状态为rentState的租赁信息 -->
+    <select id="findWaitSend" resultType="com.qd.bean.rentMsg">
+    	select rentmsg.Id,rentmsg.goodId,rentmsg.releaseId,rentmsg.remarks,rentmsg.dueTime,rentmsg.rentDate,rentmsg.rentId,rentmsg.rentState,rentmsg.rentNum,goodmsg.goodName,goodmsg.price,goodmsg.image1,rentmsg.payDate,goodmsg.unit,rentmsg.rentLen,usermsg.idState,goodmsg.deadline  
+    	from rentmsg,goodmsg,usermsg where releaseId=#{releaseId} and rentState=#{rentState} and rentmsg.goodId=goodmsg.goodId and usermsg.userId=rentmsg.releaseId
+    </select>
+    
+    <!-- 以当前用户id为发货者id，查找状态为rentState的租赁信息 -->
+    <select id="findWaitSend2" resultType="com.qd.bean.rentMsg">
+    	select rentmsg.Id,rentmsg.goodId,rentmsg.releaseId,rentmsg.remarks,rentmsg.dueTime,rentmsg.rentDate,rentmsg.rentId,rentmsg.rentState,rentmsg.rentNum,goodmsg.goodName,goodmsg.price,goodmsg.image1,rentmsg.payDate,goodmsg.unit,rentmsg.rentLen,usermsg.idState,goodmsg.deadline  
+    	from rentmsg,goodmsg,usermsg where releaseId=#{releaseId} and (rentState=3 or rentState=7) and rentmsg.goodId=goodmsg.goodId and usermsg.userId=rentmsg.releaseId
+    </select>
+    
+    <!-- 以当前用户id为收货者id，查找状态为0或者1的租赁信息(待收货订单) -->
+    <select id="findWaitReceive" resultType="com.qd.bean.rentMsg">
+    	select rentmsg.Id,rentmsg.goodId,rentmsg.releaseId,rentmsg.remarks,rentmsg.dueTime,rentmsg.rentDate,rentmsg.rentId,rentmsg.rentState,rentmsg.rentNum,goodmsg.goodName,goodmsg.price,goodmsg.image1,rentmsg.payDate,goodmsg.unit,rentmsg.rentLen,usermsg.idState,goodmsg.deadline 
+    	from rentmsg,goodmsg,usermsg where rentId=#{rentId} and (rentState=1 or rentState=0) and rentmsg.goodId=goodmsg.goodId and usermsg.userId=rentmsg.releaseId
+    </select>
+    
+    <!-- 查找用户所有的已完成订单（包括作为租用者的所有订单（包括已评价和未评价）） -->
+    <select id="findFinishByRent" resultType="com.qd.bean.rentMsg">
+    	select rentmsg.Id,rentmsg.goodId,rentmsg.remarks,rentmsg.releaseId,rentmsg.dueTime,rentmsg.rentDate,rentmsg.rentId,rentmsg.rentState,rentmsg.rentNum,goodmsg.goodName,goodmsg.price,goodmsg.image1,rentmsg.payDate,goodmsg.unit,rentmsg.rentLen,usermsg.idState,goodmsg.deadline
+    	from rentmsg,goodmsg,usermsg where rentId=#{userId} and (rentState=4 or rentState=6 or rentState=5 or rentState=8) and rentmsg.goodId=goodmsg.goodId and usermsg.userId=rentmsg.releaseId
+    </select>
+	
+	<!-- 查找用户作为发布者所有的已完成订单（包括已评价和未评价） -->
+    <select id="findFinishByRelease" resultType="com.qd.bean.rentMsg">
+    	select rentmsg.Id,rentmsg.goodId,rentmsg.remarks,rentmsg.releaseId,rentmsg.dueTime,rentmsg.rentDate,rentmsg.rentId,rentmsg.rentState,rentmsg.rentNum,goodmsg.goodName,goodmsg.price,goodmsg.image1,rentmsg.payDate,goodmsg.unit,rentmsg.rentLen,usermsg.idState,goodmsg.deadline
+    	from rentmsg,goodmsg,usermsg where releaseId=#{userId} and (rentState=4 or rentState=6 or rentState=5 or rentState=8) and rentmsg.goodId=goodmsg.goodId and usermsg.userId=rentmsg.releaseId
+    </select>
+	
+	<!-- 先以当前用户ID为rentID查询订单状态为2并且超过租赁时间的订单，修改状态为3 -->
+	<update id="modifyRentState">
+		update rentmsg set rentState=3 where rentId=#{rentId} and TO_DAYS(#{currentDate})>TO_DAYS(dueTime) and rentState=2
+	</update>
+	
+	<!-- 查询用户的收藏信息 -->
+	<select id="collectQuery" resultType="com.qd.bean.collectMsg">
+		select collectmsg.id,collectmsg.collectUserId,collectmsg.collectGoodId,collectmsg.collectDate,goodmsg.price,goodmsg.num,goodmsg.unit,goodmsg.goodName,goodmsg.deposit,goodmsg.image1
+		from collectmsg,goodmsg where collectmsg.collectGoodId=goodmsg.goodId and collectmsg.collectUserId=#{collectUserId}
+	</select>
+	
+	<!-- 删除收藏信息 -->
+	<delete id="deleteCollect">
+		delete from collectmsg where id=#{id}
+	</delete>
+	
+	<!-- 查询订单详情 -->
+	<select id="QueryRentDetail" resultType="com.qd.bean.rentDetails">
+		select rentmsg.Id,rentmsg.goodId,rentmsg.releaseId,rentmsg.dueTime,rentmsg.rentDate,rentmsg.rentId,rentmsg.rentState,rentmsg.rentNum,goodmsg.goodName,goodmsg.price,goodmsg.image1,goodmsg.deposit,rentmsg.remarks,rentmsg.payDate,usermsg.idState
+    	from rentmsg,goodmsg,usermsg where Id=#{Id} and rentmsg.goodId=goodmsg.goodId and usermsg.userId=rentmsg.releaseId
+	</select>
+	
+	<!--点击收货，将待收货状态1，改为2租用中  -->
+	<update id="modifyRentState1To2">
+		update rentmsg set rentState=2 where Id=#{Id} and rentState=1
+	</update>
+	
+	<!--点击收回，将待收回状态7，改为4交易完成  -->
+	<update id="modifyRentState7To4">
+		update rentmsg set rentState=4 where Id=#{Id} and rentState=7
+	</update>
+	
+	<!--点击归还，将待归还状态3，改为7待收回  -->
+	<update id="modifyRentState3To7">
+		update rentmsg set rentState=7 where Id=#{Id} and rentState=3
+	</update>
+	
+	<!--点击发货，将待发货状态0，改为1待收货  -->
+	<update id="modifyRentState0To1">
+		update rentmsg set rentState=1 where Id=#{Id} and rentState=0
+	</update>
+	
+	
+	<!--评论完成后,将状态由4改为6  -->
+	<update id="modifyRentState4To6">
+		update rentmsg set rentState=6 where Id=#{Id} and rentState=4
+	</update>
+	
+	<!-- 将状态从租用中2改为归还中3 -->
+	<update id="modifyRentState2To3">
+		update rentmsg set rentState=3 where Id=#{Id} and rentState=2
+	</update>
+	
+	
+	<!-- 将状态从租用中2改为已完成5 -->
+	<update id="modifyRentState2To5">
+		update rentmsg set rentState=5 where Id=#{Id} and rentState=2
+	</update>
+	
+	<!-- 将状态从归还中3改为已完成5 -->
+	<update id="modifyRentState3To5">
+		update rentmsg set rentState=5 where Id=#{Id} and rentState=3
+	</update>
+	
+	<!-- 将状态从已完成押金扣留5改为已评价押金扣留8 -->
+	<update id="modifyRentState5To8">
+		update rentmsg set rentState=8 where Id=#{Id} and rentState=5
+	</update>
+	
+	<!-- 获取用户积分 -->
+	<select id="getUserIntegration" resultType="int">
+		select score from usermsg where userId=#{userId}
+	</select>
+	
+	<!-- 根据租赁信息的id获取发布该商品信息的用户电话号码 -->
+	<select id="getReleasePhone" resultType="java.lang.String">
+		select usermsg.phone from rentmsg,usermsg where rentmsg.Id=#{Id} and rentmsg.releaseId=usermsg.userId
+	</select>
+	
+	<!-- 根据租赁信息的id获取租用该商品的用户电话号码 -->
+	<select id="getRentPhone" resultType="java.lang.String">
+		select usermsg.phone from rentmsg,usermsg where rentmsg.Id=#{Id} and rentmsg.rentId=usermsg.userId
+	</select>
+	
+	<!-- 查看用户是否已完善信息，填写了手机号码 -->
+	<select id="checkPhone" resultType="java.lang.String">
+		select phone from usermsg where userId=#{userId}
+	</select>
+	
+	<!-- 根据商品浏览次数找到浏览次数最多，且还能租用的商品信息 limit 3-->
+	<select id="getHotGood" resultType="com.qd.bean.goodMsg">
+		select goodmsg.goodId,goodmsg.goodName,goodmsg.introduction,goodmsg.goodDetail,goodmsg.userId,goodmsg.price,goodmsg.releaseDate,goodmsg.views,goodmsg.type,goodmsg.state,goodmsg.unit,goodmsg.deposit,goodmsg.collect,goodmsg.deadline,goodmsg.image1,goodmsg.image2,goodmsg.image3,goodmsg.num
+		from goodmsg,usermsg 
+		where num>0 and goodmsg.userId=usermsg.userId and usermsg.idState=0 order by goodmsg.views DESC  
+	</select>
+	
+	<!-- 获取最近发布的三条商品信息 -->
+	<select id="getNewGood" resultType="com.qd.bean.goodMsg">
+		select goodmsg.goodId,goodmsg.goodName,goodmsg.introduction,goodmsg.goodDetail,goodmsg.userId,goodmsg.price,goodmsg.releaseDate,goodmsg.views,goodmsg.type,goodmsg.state,goodmsg.unit,goodmsg.deposit,goodmsg.collect,goodmsg.deadline,goodmsg.image1,goodmsg.image2,goodmsg.image3,goodmsg.num
+		from goodmsg,usermsg
+		where num>0 and goodmsg.userId=usermsg.userId and usermsg.idState=0 order by goodmsg.goodId DESC 
+	</select>
+	
+	<!-- 获取浏览最多的日用品或其他类商品信息 -->
+	<select id="getHotGroceries" resultType="com.qd.bean.goodMsg">
+		select goodmsg.goodId,goodmsg.goodName,goodmsg.introduction,goodmsg.goodDetail,goodmsg.userId,goodmsg.price,goodmsg.releaseDate,goodmsg.views,goodmsg.type,goodmsg.state,goodmsg.unit,goodmsg.deposit,goodmsg.collect,goodmsg.deadline,goodmsg.image1,goodmsg.image2,goodmsg.image3,goodmsg.num 
+		from goodmsg,usermsg 
+		where (type=4 or type=5) and num>0 and goodmsg.userId=usermsg.userId and usermsg.idState=0 order by goodmsg.views DESC 
+	</select>
+	
+	<!--获取浏览最多的三条图书/电子产品/出行工具信息 -->
+	<select id="getHot" resultType="com.qd.bean.goodMsg">
+		select goodmsg.goodId,goodmsg.goodName,goodmsg.introduction,goodmsg.goodDetail,goodmsg.userId,goodmsg.price,goodmsg.releaseDate,goodmsg.views,goodmsg.type,goodmsg.state,goodmsg.unit,goodmsg.deposit,goodmsg.collect,goodmsg.deadline,goodmsg.image1,goodmsg.image2,goodmsg.image3,goodmsg.num
+		from goodmsg,usermsg  
+		where type=#{type} and num>0 and goodmsg.userId=usermsg.userId and usermsg.idState=0 order by goodmsg.views DESC
+	</select>
+	
+	<!-- 根据商品goodId获取商品详细信息 -->
+	<select id="getGoodDetail" resultType="com.qd.bean.goodMsg">
+		select * from goodmsg where goodId=#{goodId}
+	</select>
+	
+	<!-- 收藏商品进入收藏表 -->
+	<insert id="collectGood">
+		insert into collectmsg(collectUserId,collectGoodId,collectDate) values(#{collectUserId},#{collectGoodId},#{collectDate})
+	</insert>
+	
+	<!-- 商品收藏数加1 -->
+	<update id="addCollect">
+		update goodmsg set collect=collect+1 where goodId=#{goodId}
+	</update>
+	
+	<!-- 取消收藏(根据用户id和商品id) -->
+	<delete id="cancelcollect">
+		delete from collectmsg where collectUserId=#{collectUserId} and collectGoodId=#{collectGoodId}
+	</delete>
+	
+	<!-- 商品收藏数减1 -->
+	<update id="subCollect">
+		update goodmsg set collect=collect-1 where goodId=#{goodId}
+	</update>
+	
+	<!-- 根据商品id和用户id查看该用户是否收藏该商品 -->
+	<select id="findCollect" resultType="com.qd.bean.collectMsg">
+		select * from collectmsg where collectUserId=#{collectUserId} and collectGoodId=#{collectGoodId}
+	</select>
+	
+	<!-- 根据商品id获取评论 -->
+	<select id="findComment" resultType="com.qd.bean.commentMsg">
+		select commentmsg.commentId,commentmsg.commentGoodId,commentmsg.commentUserId,commentmsg.content,commentmsg.degree,commentmsg.anonymous,commentmsg.date,usermsg.userName,usermsg.idState,usermsg.nickName,usermsg.avatarUrl,commentmsg.isRead,usermsg.score from commentmsg,usermsg where commentGoodId=#{commentGoodId} and usermsg.userId=commentmsg.commentUserId
+	</select>
+	
+	<!-- 添加购物车 -->
+	<insert id="addCart">
+		insert into cartmsg(cartUserId,cartGoodId,cartNum,timeLen) values(#{cartUserId},#{cartGoodId},#{cartNum},#{timeLen})
+	</insert>
+	
+	
+	<!-- 根据用户id获取用户的购物车内容 -->
+	<select id="fingCartByUser" resultType="com.qd.bean.cartMsg">
+		select cartmsg.cartGoodId,cartmsg.cartNum,cartmsg.cartUserId,cartmsg.timeLen,cartmsg.cartId,goodmsg.price,goodmsg.num,goodmsg.goodName,goodmsg.unit,goodmsg.deposit,goodmsg.image1,goodmsg.userId from cartmsg,goodmsg where cartmsg.cartGoodId=goodmsg.goodId and cartmsg.cartUserId=#{cartUserId}
+	</select>
+	
+	<!-- 在购物车中修改cartNum -->
+	<update id="modifyCartNumAdd">
+		update cartmsg set cartNum=cartNum+1 where cartId=#{cartId}
+	</update>
+	
+	<!-- 在购物车中修改cartNum（减） -->
+	<update id="modifyCartNumSub">
+		update cartmsg set cartNum=cartNum-1 where cartId=#{cartId}
+	</update>
+	
+	
+	<!-- 根据购物车信息的id号删除 -->
+	<delete id="deleteCartById">
+		delete from cartmsg where cartId=#{cartId}
+	</delete>
+	
+	
+	<!-- 在购物车中修改timeLen -->
+	<update id="modifyCartTimeAdd">
+		update cartmsg set timeLen=timeLen+1 where cartId=#{cartId}
+	</update>
+	
+	<!-- 在购物车中修改timeLen（减） -->
+	<update id="modifyCartTimeSub">
+		update cartmsg set timeLen=timeLen-1 where cartId=#{cartId}
+	</update>
+	
+	<!-- 将商品插入到租赁表中,并设置状态为0 -->
+	<!-- 这里由于在mapper里面写数据库语句时，如果rentDate和dueTime没有值的话，传null和''都是没有办法通过编译的（虽然这种写法在MySQL里面可以），所以这里还是传入一个默认的0000-00-00作为值 -->
+	<!-- 但是在从数据库中读取这行日期被设置为0000-00-00的数据时，是会报错的，原因是由于在MySQL的mode中严格设置了月份天数不可为0的设置 -->
+	<!-- 以上问题在读取时有两种解决方案：-->
+	<!-- 1、①先使用select @@sql_mode;查看sql_mode ②再使用SET GLOBAL sql_mode=‘ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION’;修改sql_mode -->
+	<!-- 2、在MySQL的url中添加zeroDateTimeBehavior=convertToNull即可，这样当遇到0000-00-00时会返回为null -->
+	<!-- 这里采用了第二种方法，在spring.xml中对MySQL配置里的url做了修改 -->
+	<insert id="addRentMsg">
+		insert into rentmsg(goodId,releaseId,dueTime,rentDate,rentId,rentState,rentNum,remarks,payDate,rentLen) values(#{goodId},#{releaseId},'0000-00-00','0000-00-00',#{rentId},0,#{rentNum},#{remarks},#{payDate},#{rentLen})
+	</insert>
+	
+	<!-- 用户从购物车下单后修改商品表 -->
+	<update id="modifyGoodMsg">
+		update goodmsg set num=num-#{cartNum} where goodId=#{goodId}
+	</update>
+	
+	<!-- 添加评论 -->
+	<insert id="addComment">
+		insert into commentmsg(commentGoodId,content,degree,commentUserId,anonymous,date,isRead) values(#{commentGoodId},#{content},#{degree},#{commentUserId},#{anonymous},#{date},0)
+	</insert>
+	
+	<!-- 根据评价的分数，对发布者的积分进行修改（1颗星不加分，2-3颗星加10分，4颗星加20分，5颗星加30分） -->
+	<update id="modifyReleaseScore">
+		update usermsg set score=score+#{add} where userId=#{userId}
+	</update>
+	
+	<!-- 根据商品id将交易完成的商品数量恢复原状 -->
+	<update id="addNumAfterTrade">
+		update goodmsg set num=num+#{rentNum} where goodId=#{goodId}
+	</update>
+	
+	<!-- 根据租赁id修改租赁表中的rentDate和dueTime -->
+	<update id="modifyRentTime">
+		update rentmsg set rentDate=#{rentDate},dueTime=#{dueTime} where Id=#{Id}
+	</update>
+	
+	<!-- 根据输入的key在goodmsg中模糊查询，（对比名字，简介，详情） -->
+	<!-- 使用like时，并不是'%#{key}%'，而是'%${key}%' -->
+	<select id="searchByKey" resultType="com.qd.bean.goodMsg">
+		select * from goodmsg where goodDetail like '%${key}%' or introduction like '%${key}%' or goodName like '%${key}%' or type=#{type}
+	</select>
+	
+	<!-- 根据goodID查看该商品的归还期限 -->
+	<select id="queryReturnTime" resultType="int">
+		select deadline from goodmsg where goodId=#{goodId}
+	</select>
+	
+	<!-- 根据用户id扣除用户积分-->
+	<update id="subScoreById">
+		update usermsg set score=score-20 where userId=#{userId}
+	</update>
+	
+	<!-- 根据用户id设置用户idstate为1，表示被封，默认为0 -->
+	<update id="updateIdState">
+		update usermsg set idState=1 where userId=#{userId}
+	</update>
+	
+	<!-- 根据评论id删除评论 -->
+	<delete id="deleteCommentById">
+		delete from commentmsg where commentId=#{commentId}
+	</delete>
+	
+	
+	<!-- 根据商品ID将该商品的views加1 -->
+	<update id="addViews">
+		update goodmsg set views=views+1 where goodId=#{goodId}
+	</update>
+	
+	<!-- 根据用户userId查出来用户当前有没有完善姓名 -->
+	<select id="getUserName" resultType="java.lang.String">
+		select userName from usermsg where userId=#{userId}
+	</select>
+	
+	<!-- 根据用户的userId添加用户的微信昵称和头像进入usermsg -->
+	<update id="addNickAndUrl"> 
+		update usermsg set nickName=#{nickName},avatarUrl=#{avatarUrl} where userId=#{userId}
+	</update>
+	
+	<!-- 根据商品的goodID找到发布者的电话 -->
+	<select id="findPhoneByGoodId" resultType="java.lang.String">
+		select phone from usermsg,goodmsg where goodmsg.goodId=#{goodId} and goodmsg.userId=usermsg.userId
+	</select>
+	
+	
+	<!-- 先查找登录者（根据userId）的所有信息，包括已读和未读 -->
+	<select id="findNoReadComment" resultType="com.qd.bean.commentMsg">
+		select commentmsg.commentId,commentmsg.commentGoodId,commentmsg.commentUserId,commentmsg.content,commentmsg.degree,commentmsg.anonymous,commentmsg.date,usermsg.userName,usermsg.idState,usermsg.nickName,usermsg.avatarUrl,commentmsg.isRead,usermsg.score from usermsg,goodmsg,commentmsg where commentmsg.commentUserId=usermsg.userId and commentmsg.commentGoodId=goodmsg.goodId and goodmsg.userId=#{userId}
+	</select>
+	
+	
+	<!-- 对每一条评论查找存在的未读回复 -->
+	<select id="findNoReadReply" resultType="com.qd.bean.replyMsg">
+		select * from replymsg where replyComment=#{replyComment} and isRead=0 and replyToId=#{replyToId} ORDER BY sequence ASC
+	</select>
+	
+	<!-- 根据评论commentID修改已读 -->
+	<update id="modifyCommentRead">
+		update commentmsg set isRead=1 where commentId=#{commentId}
+	</update>
+	
+	<!-- 根据评论commentID将这条评论下的未读回复均改为已读 -->
+	<update id="modifyReplyRead">
+		update replymsg set isRead=1 where Id=#{Id}
+	</update>
+	
+	<!-- 查找已读评论，根据登录者的id，查找出其他人对于登陆者发布的商品的评论，并且登陆者已经阅读过的(这里查找出来的评论，要保证所以回复也是已读的) -->
+	<!-- 这里先查出来所有已读评论，在controller层再对查出的每一条评论，查看有没有未读回复，如果有那么就从list中删除该条信息 -->
+	<select id="findALLComment" resultType="com.qd.bean.commentMsg"> 
+		select distinct commentmsg.commentId,commentmsg.commentGoodId,commentmsg.commentUserId,commentmsg.content,commentmsg.degree,commentmsg.anonymous,commentmsg.date,usermsg.userName,usermsg.idState,usermsg.nickName,usermsg.avatarUrl,commentmsg.isRead,usermsg.score from usermsg,goodmsg,commentmsg where commentmsg.commentUserId=usermsg.userId and commentmsg.commentGoodId=goodmsg.goodId and goodmsg.userId=#{userId} and commentmsg.isRead=1
+	</select>
+	
+	<!-- 先查出发布该商品信息的商家信息(这个在controller调用函数查)，再查出该商品的发布信息 -->
+	<select id="queryGood" resultType="com.qd.bean.goodMsg">
+		select * from goodmsg where goodId=#{goodId}
+	</select>
+	
+	<!-- 根据商品id查找商品发布者的信息 -->
+	<select id="queryGoodUser" resultType="com.qd.bean.userMsg">
+		select usermsg.userId,usermsg.score,usermsg.phone,usermsg.birthday,usermsg.idCard,usermsg.school,usermsg.wxNum,usermsg.sex,usermsg.userName,usermsg.idState,usermsg.nickName,usermsg.avatarUrl from usermsg,goodmsg where goodmsg.userId=usermsg.userId and goodmsg.goodId=#{goodId}
+	</select>
+	
+	<!-- 根据评论id查找评论 -->
+	<select id="findCommentById" resultType="com.qd.bean.commentMsg">
+		select distinct commentmsg.commentId,commentmsg.commentGoodId,commentmsg.commentUserId,commentmsg.content,commentmsg.degree,commentmsg.anonymous,commentmsg.date,usermsg.userName,usermsg.idState,usermsg.nickName,usermsg.avatarUrl,commentmsg.isRead,usermsg.score from usermsg,goodmsg,commentmsg where commentmsg.commentUserId=usermsg.userId and goodmsg.goodId=commentmsg.commentGoodId and commentId=#{commentId}
+	</select>
+	
+	<!-- 再根据commentID查找下属回复 -->
+	<select id="findReply" resultType="com.qd.bean.replyMsg">
+		select * from replymsg where replyComment=#{commentId} ORDER BY sequence ASC
+	</select>
+	
+	<!-- 添加回复 -->
+	<insert id="addReply">
+		insert into replymsg(replyComment,replyId,replyToId,sequence,isRead,replyDate,replyContent) values(#{replyComment},#{replyId},#{replyToId},#{sequence},0,#{replyDate},#{replyContent})
+	</insert>
+	
+	<!-- 根据replyComment，找到该条评论下次序最大的回复的次序号 -->
+	<select id="findMaxSequence" resultType="java.lang.Integer">
+		select Max(sequence) from replymsg where replyComment=#{replyComment}
+	</select>
+	
+	<!-- 删除回复，根据回复表的id -->
+	<delete	id="deleteReply">	
+		delete from replymsg where Id=#{Id}
+	</delete>
+	
+	<!-- 以登录者id作为replyToID 查询出最后一条未读回复信息的id -->
+	<select id="findreplyId" resultType="int"> 
+		select MAX(Id) from replymsg where replyToId=#{replyToId} and isRead=0
+	</select>
+	
+	<!-- 以回复表的id 查询出最后一条未读回复信息 -->
+	<select id="findLastReply" resultType="com.qd.bean.replyMsg">
+		select * from replymsg where Id=#{Id}
+	</select>
+	
+	<!-- 查找该条评论下的回复总数，根据commentID查找（这里不再区分是不是发给登陆者的） -->
+	<select id="replyNum" resultType="int">
+		select COUNT(*) from replymsg where replyComment=#{replyComment}
+	</select>
+	
+	<!-- 根据commentID查出最后一条回复信息 -->
+	<select id="findLastReply2" resultType="com.qd.bean.replyMsg">
+		select * from replymsg where replyComment=#{replyComment} order by Id DESC limit 1
+	</select>
+	
+	<!-- 根据商品id，和对话双方的id，查询主聊天信息 -->
+	<select id="queryChat" resultType="com.qd.bean.chatMsg">
+		select * from chatmsg where chatGoodId=#{chatGoodId} and (chatRightId=#{chatA} or chatRightId=#{chatB}) and (chatLeftId=#{chatA} or chatLeftId=#{chatB})
+	</select>
+	
+	<!-- 根据主留言信息的id查询下属留言信息 -->
+	<select id="queryChatAfter" resultType="com.qd.bean.afterChatMsg">
+		select * from afterchatmsg where mainChatId=#{mainChatId} order by Id ASC
+	</select>
+	
+	<!-- 根据goodid和openId（作为chatRightId），usermsg.userId（作为chatLeftId)添加主聊天信息(文字信息) -->
+	<insert id="addChat">
+		insert into chatmsg(chatGoodId,chatRightId,chatLeftId,chatDate,chatContent,chatTime,isRead,isShowR,isShowL,isImage) values(#{chatGoodId},#{chatRightId},#{chatLeftId},#{chatDate},#{chatContent},#{chatTime},0,0,0,0)
+	</insert>
+	
+	<!-- 根据goodid和openId（作为chatRightId），usermsg.userId（作为chatLeftId)添加主聊天信息(图片信息) -->
+	<insert id="addChatImage">
+		insert into chatmsg(chatGoodId,chatRightId,chatLeftId,chatDate,chatContent,chatTime,isRead,isShowR,isShowL,isImage) values(#{chatGoodId},#{chatRightId},#{chatLeftId},#{chatDate},#{chatContent},#{chatTime},0,0,0,1)
+	</insert>
+	
+	<!-- 根据主聊天信息的id添加下属聊天信息（文字信息） -->
+	<insert id="addChatAfter">
+		insert into afterchatmsg(mainChatId,chatRightIdA,chatLeftIdA,chatDate,chatContent,chatTime,isRead,isImage) values(#{mainChatId},#{chatRightIdA},#{chatLeftIdA},#{chatDate},#{chatContent},#{chatTime},0,0)
+	</insert>
+	
+	<!-- 根据主聊天信息的id添加下属聊天信息（图片信息） -->
+	<insert id="addChatAfterImage">
+		insert into afterchatmsg(mainChatId,chatRightIdA,chatLeftIdA,chatDate,chatContent,chatTime,isRead,isImage) values(#{mainChatId},#{chatRightIdA},#{chatLeftIdA},#{chatDate},#{chatContent},#{chatTime},0,1)
+	</insert>
+	
+	
+	<!-- 查找主留言，根据登录者id查找chatRightId或chatLeftId=id的主留言信息 -->
+	<select id="findMainChat" resultType="com.qd.bean.chatMsg">
+		select * from chatmsg where chatRightId=#{openId} or chatLeftId=#{openId}
+	</select>
+	
+	<!-- 根据留言id将主留言改为已读 -->
+	<update id="setMainRead">
+		update chatmsg set isRead=1 where Id=#{Id} and chatLeftId=#{chatLeftId}
+	</update>
+	
+	<!-- 根据mainChatId设置下属评论已读 -->
+	<update id="setAfterRead">
+		update afterchatmsg set isRead=1 where mainChatId=#{mainChatId} and chatLeftIdA=#{chatLeftId}
+	</update>
+	
+	
+	<!-- 设置留言信息的显示 -->
+	<update id="modifyShowState">
+		update chatmsg set isShowR=#{isShowR},isShowL=#{isShowL} where Id=#{Id}
+	</update>
+	
+	<!-- 根据id查找主留言信息 -->
+	<select id="findMainChatById" resultType="com.qd.bean.chatMsg">
+		select * from chatmsg where Id=#{Id}
+	</select>
+	
+	<!-- 将主聊天信息的isShow都改为1 -->
+	<update id="updateShow">
+		update chatmsg set isShowR=0,isShowL=0 where Id=#{Id}
+	</update>
+	
+	<!-- 根据商品id查找发布者所在学校 -->
+	<select id="findSchool" resultType="java.lang.String">
+		select usermsg.school from usermsg,goodmsg where goodmsg.goodId=#{goodId} and goodmsg.userId=usermsg.userId
+	</select>
+	
+	<!-- 根据userId查找头像，昵称，名字 -->
+	<select id="queryNameAndNickAndAvat" resultType="com.qd.bean.userMsg">
+		select * from usermsg where userId=#{userId}
+	</select>
+	
+	<!-- 根据头像查找到对应的用户（因为微信在进行头像存储时，每个头像的地址一定是唯一的，所以可以找到唯一的用户） -->
+	<!-- 找到这个用户后，返回这个用户的所有个人信息，和此用户发布的所有商品信息，再根据这些商品信息查找出所有评论，统计五星评论数和总评论数，得出好评率 -->
+	<select id="findHomeMsg" resultType="com.qd.bean.userMsg">
+		select * from usermsg where avatarUrl=#{avat}
+	</select>
+	
+	<!-- 根据商品id统计对应评论数 -->
+	<select id="totalComment" resultType="int">
+		select COUNT(*) from commentmsg where commentGoodId=#{goodId}
+	</select>
+	
+	<!-- 根据商品id统计对应好评数 -->
+	<select id="goodComment" resultType="int">
+		select COUNT(*) from commentmsg where commentGoodId=#{goodId} and degree>=4
+	</select>
+	
+	<!-- 添加关注 -->
+	<insert id="addFollow">
+		insert into followmsg(followId,followToId) values(#{followId},#{followToId})
+	</insert>
+	
+	<!-- 取消关注 -->
+	<delete id="cancelFollow">
+		delete from followmsg where followId=#{followId} and followToId=#{followToId}
+	</delete>
+	
+	<!-- 查询关注状态 -->
+	<select id="followState" resultType="com.qd.bean.followMsg">
+		select * from followmsg where followId=#{followId} and followToId=#{followToId}
+	</select>
+	
+	 <!-- 查询租用中的订单（仅包括租用中） -->
+    <select id="find" resultType="com.qd.bean.rentMsg">
+    	select rentmsg.Id,rentmsg.goodId,rentmsg.releaseId,rentmsg.remarks,rentmsg.dueTime,rentmsg.rentDate,rentmsg.rentId,rentmsg.rentState,rentmsg.rentNum,goodmsg.goodName,goodmsg.price,goodmsg.image1,rentmsg.payDate,goodmsg.unit,rentmsg.rentLen,usermsg.idState,goodmsg.deadline  
+    	from rentmsg,goodmsg,usermsg where rentId=#{rentId} and rentState=#{rentState} and rentmsg.goodId=goodmsg.goodId and usermsg.userId=rentmsg.releaseId
+    </select>
+    
+    <!--根据用户id查找该用户的所有关注  -->
+    <select id="findFollow" resultType="com.qd.bean.followMsg">
+    	select * from followmsg where followId=#{followId}
+    </select>
+	
+	<!-- 根据商品id修改商品信息 -->
+	<update id="modifyGood">
+		update goodmsg set goodName=#{goodName},unit=#{unit},type=#{type},goodDetail=#{goodDetail},deadline=#{deadline},price=#{price},deposit=#{deposit},introduction=#{introduction},num=#{num} where goodId=#{goodId}
+	</update>
+</mapper>
